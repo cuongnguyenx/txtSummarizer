@@ -1,4 +1,3 @@
-from os import listdir
 import lexy
 import bs4 as bs
 import urllib.request
@@ -16,6 +15,7 @@ def parseText(link):
     article_content = ''
     title = ''
     paragraphs = parsed_article.find_all('p')
+    lang = parsed_article.find('html')['lang']
 
     if 'nytimes.com' in link:
         article_content = parsed_article.find('section', {'name': "articleBody"})
@@ -54,52 +54,88 @@ def parseText(link):
         article_content = parsed_article.find('div', {'class': 'content-group story-core'})
         paragraphs = article_content.find_all('p', {'class': False})
 
-    return title, paragraphs
+    if 'vnexpress.net' in link:
+        paragraphs = parsed_article.find_all('p', {'class': 'Normal'})
+        title = parsed_article.find('head').find('title')
+
+    if 'tuoitre' in link:
+        article_content = parsed_article.find('div', {'id': 'main-detail-body'})
+        paragraphs = article_content.find_all('p', {'class': ""})
+        title = parsed_article.find('head').find('title')
+    return lang, title, paragraphs
 
 
-def generateSummary(link):
+def generateSummary(link, typ):
     prev = time.time()
-    docu_dir = 'K:/bbc/combi'
     sentences = ""
-    ttl, paragraphs = parseText(link)
+    lang_name, ttl, paragraphs = parseText(link)
     # Append the text into one string, for NTLK sentence tokenizing
     for p in paragraphs:
         if p.text[0] == '[' and p.text[-1] == ']':
             continue
         sentences += p.text
+        sentences += '<EOP>. '
         if p.text[-1] in ['.', '!', '?']:
             sentences += " "
     title = ttl.text
     # Scrub sentences of fluff (Mostly Refenrences in Square Brackets)
+
     sentences = re.sub(r'\[[0-9]*\]', ' ', sentences)
     sentences = re.sub(r'\s+', ' ', sentences)
-    sentences = re.sub(r'\.([A-Z0-9])', r'. \1', sentences)
-    sentences = re.sub(r'."([A-Z0-9])', r'". \1', sentences)
+    # sentences = re.sub(r'\.([A-Z0-9])', r'. \1', sentences)
+    sentences = re.sub(r'\."([A-Z0-9])', r'". \1', sentences)
     sentences = re.sub(r'(Mr\.|Ms\.|Dr\.|Mrs\.|[A-Z]\.) ', r'\1', sentences)
+    sentences = re.sub(r'([0-9])\.([0-9])', r'\1\2', sentences)
 
     # formatted_article_text = re.sub('[^a-zA-Z]', ' ', sentences)
 
-    sentence_list = nltk.sent_tokenize(sentences)
+    sentence_list = []
+    vi_token = nltk.data.load('vi.pickle')
+
+    if lang_name == 'en':
+        sentence_list = nltk.sent_tokenize(sentences)
+    elif lang_name == 'vi':
+        sentence_list = vi_token.tokenize(sentences)
+
     new_sent_list = []
+    paragraph_bound = [-1]
     # Some sentences might end with a quote, which NLTK does not detect. Added a proper period after quotes for NLTK
     for sents in sentence_list:
-        sents = re.sub(r'([!?.][\"\”])', r'\1. ', sents)
-        temp = nltk.sent_tokenize(sents)
+        temp = []
+        if '<EOP>' not in sents:
+            sents = re.sub(r'([!?.][\"\”])', r'\1. ', sents)
+        if lang_name == 'en':
+            temp = nltk.sent_tokenize(sents)
+        elif lang_name == 'vi':
+            temp = vi_token.tokenize(sents)
         new_sent_list.extend(temp)
 
     for val, sents in enumerate(new_sent_list):
+        # print(sents)
+        if '<EOP>' in sents:
+            paragraph_bound.append(val)
+            sents = sents.replace('<EOP>.', '')
+            new_sent_list[val] = sents
         if len(sents) > 3 and sents[-3:] in ['.\".', '?\".', '!\".']:
             new_sent_list[val] = sents[:-2]
-    print(time.time() - prev)
+
+    # print(time.time() - prev)
     # Generate the summary using LexRank, @summary_size = number of sentences
     # @threshold = only count connections above threshold
-    summary = lexy.get_summary(sentence_list, summary_size=10, threshold=0.2)
-    rtn = ""
-    for val, s in enumerate(summary):
-        rtn += str(val+1)+".  "+s+"\n\n"
-    # print(time.time() - prev)
-    return title, rtn
+
+    if typ == 'default':
+        summary = lexy.get_summary(sentence_list, lang_name, summary_size=10, threshold=0.1)
+        rtn = ""
+        for val, s in enumerate(summary):
+            rtn += str(val + 1) + ".  " + s + "\n\n"
+        print(time.time() - prev)
+        return title, rtn
+    elif typ == 'custom':
+        summary = lexy.get_summary_with_user(new_sent_list, lang_name, threshold=0.1)
+        return title, new_sent_list, summary, paragraph_bound
 
 
 # parseText('https://www.nytimes.com/2019/02/06/opinion/state-of-the-union-abortion-trump.html')
-# print(generateSummary("https://www.theguardian.com/world/2019/feb/10/venezuela-nicolas-maduro-demise-irreversible-trump-adviser-says"))
+# output = generateSummary("https://vnexpress.net/bong-da/messi-ghi-it-nhat-30-ban-trong-11-mua-lien-tiep-3882158.html")
+# for ss in output:
+# print(ss)
