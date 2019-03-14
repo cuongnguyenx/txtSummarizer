@@ -4,7 +4,6 @@ import os
 
 path_vi = 'K:/vi_txt/Train_Full/Chinh tri Xa hoi'
 
-
 def load_vi(direc):
     print("I'm in!")
     ll = os.listdir(direc)

@@ -9,18 +9,22 @@ import nltk
 
 def grabfront(link):
     try:
-        scraped_data = urllib.request.urlopen(link)
-    except urllib.error.URLError:
+        scraped_data = urllib.request.urlopen(link)  # Try grabbing the source code of the page
+    except urllib.error.URLError:  # In the case there's no Internet, or the link is invalid
         return [], []
 
+    # Parse the HTML to be analyzable
     article = scraped_data.read()
     parsed_article = bs.BeautifulSoup(article, 'lxml')
-    verboten = ['crossword', 'podcast', 'graphics', 'photography']
-    links = []
-    titles = []
 
+    # Ignore link with any of these following words
+    verboten = ['crossword', 'podcast', 'graphics', 'photography', 'interactive', 'av', 'food', 'newsletter']
+    links = []  # Contains the links to pages on the FrontPageList, to be used for urllib
+    titles = []  # Contains the titles to the corresponding links
+
+    # A lot of the following are custom rules discovered by me, and they work as is currently
     if 'nytimes.com' in link:
-        headlines = parsed_article.find_all('article', {'class': 'css-8atqhb'})
+        headlines = parsed_article.find_all('article', {'class': ['css-8atqhb']})
         for xx in headlines[:-1]:
             sublink = xx.find('a')['href']
             title = xx.find('h2').text
@@ -30,18 +34,18 @@ def grabfront(link):
             else:
                 continue
             titles.append(title)
-            print(link + sublink)
-            print(title)
-            print('\n')
+            # print(link + sublink)
+            # print(title)
+            # print('\n')
 
     if 'washingtonpost.com' in link:
-        print('{INFO] WAPO')
         headlines = parsed_article.find_all('div', {'class': ["headline x-small normal-style text-align-inherit",
                                                               "headline xx-small normal-style text-align-inherit",
                                                               "headline small normal-style text-align-inherit"]})
-        print(headlines)
         for xx in headlines[:-1]:
             sublink = xx.find('a')['href']
+            if 'gallery' in sublink:
+                continue
             title = xx.text
 
             if not any([x in sublink for x in verboten]):
@@ -49,9 +53,9 @@ def grabfront(link):
             else:
                 continue
             titles.append(title)
-            print(sublink)
-            print(title)
-            print('\n')
+            # print(sublink)
+            # print(title)
+            # print('\n')
 
     if 'reuters.com' in link:
         headlines_1 = parsed_article.find_all('div', {'class': ['story-content', 'feature']})
@@ -59,6 +63,15 @@ def grabfront(link):
             if xx.find('a'):
                 atag = xx.find('a')
                 sublink = atag['href']
+                # Not Text Article
+                if 'tv' in sublink:
+                    continue
+
+                if 'reuters' not in sublink:
+                    sublink = link + sublink
+                elif 'https:' not in sublink:
+                    sublink = 'https:' + sublink
+
             else:
                 continue
             if atag.find('h3'):
@@ -72,11 +85,13 @@ def grabfront(link):
                 # print(re.sub(r'[\t\n]+', r"", title) + "\n")
             else:
                 continue
+            title = re.sub(r'[\t\n]+', r"", title)
             links.append(sublink)
-            titles.append(re.sub(r'[\t\n]+', r"", title))
+            titles.append(title)
 
     if 'bbc.com' in link:
-        headlines_1 = parsed_article.find_all('div', {'class': ['media__content']})
+        headlines_1 = parsed_article.find_all('div',
+                                              {'class': ['media__content', 'story-body sp-story-body gel-body-copy']})
         for xx in headlines_1[:-1]:
             sublink = ''
             if not xx.find('p'):
@@ -84,19 +99,23 @@ def grabfront(link):
 
             if xx.find('a'):
                 atag = xx.find('a')
-                if 'bbc.com' not in atag['href']:
-                    sublink = link + atag['href']
-                else:
-                    sublink = atag['href']
-                title = atag.text
 
+                if not any([x in atag for x in verboten]):
+                    if 'bbc' not in atag['href']:
+                        sublink = link + atag['href']
+                    else:
+                        sublink = atag['href']
+                    title = atag.text
+
+                    links.append(sublink)
+                    titles.append(re.sub(r'[\s]+', r" ", title))
+                else:
+                    continue
             else:
                 continue
-            links.append(sublink)
-            titles.append(re.sub(r'[\s]+', r" ", title))
 
-            print(sublink)
-            print(re.sub(r'[\s]+', r" ", title) + "\n")
+            # print(sublink)
+            # print(re.sub(r'[\s]+', r" ", title) + "\n")
 
     if 'theguardian.com' in link:
         sections = parsed_article.find_all('section', {'id': ['headlines', 'opinion', 'spotlight']})
@@ -105,11 +124,14 @@ def grabfront(link):
             for xx in headlines[:-1]:
                 sublink = xx.find('a')['href']
                 title = xx.find('span', {'class': 'js-headline-text'}).text
+                if 'video' in sublink:
+                    continue
+
                 links.append(sublink)
                 titles.append(title)
 
-                print(sublink)
-                print(title + "\n")
+                # print(sublink)
+                # print(title + "\n")
 
     if 'wsj.com' in link:
         headlines = parsed_article.find_all('h3', {'class': ['wsj-headline dj-sg wsj-card-feature heading-1',
@@ -122,7 +144,24 @@ def grabfront(link):
             links.append(sublink)
             titles.append(title)
 
-            print(sublink)
-            print(title + "\n")
+            # print(sublink)
+            # print(title + "\n")
+
+    if 'apnews.com' in link:
+        headlines = parsed_article.find_all('div', {'class': 'CardHeadline'})
+        print(headlines)
+        for xx in headlines[:-1]:
+            atag = xx.find('a', {'class': 'headline'})
+            sublink = link + atag['href']
+            title = atag.find('h1').text
+
+            if sublink not in links:
+                links.append(sublink)
+            else:
+                continue
+            titles.append(title)
+
+        print(sublink)
+        print(title + "\n")
 
     return links, titles

@@ -6,15 +6,17 @@ import lxrTest
 import time
 import numpy as np
 import tkinter.scrolledtext as tkst
+import tkinter.messagebox
+from frontpage import FrontPageGrid
 
 
 class SummaryFrame:
     # TODO Implement multiprocessing to speed up runtime
     # TODO Prettify GUI
     def __init__(self, master):
-        self.prog1 = Frame(master, bg="khaki3")
-        self.prog2 = Frame(master, bg='khaki3')
-        self.prog3 = Frame(master, bg='khaki3')
+        self.prog1 = Frame(master, bg="khaki3")  # Frame for Entry, Textbox and their labels
+        self.prog2 = Frame(master, bg='khaki3')  # Frame for RESET Button
+        self.prog3 = Frame(master, bg='khaki3')  # Frame for length slider
 
         # Labels "Enter URL" and "Output Summary:
         self.lbl_link = Label(self.prog1, text="Enter URL: ", bg="khaki3", font=("Verdana", 12, 'bold'),
@@ -28,7 +30,7 @@ class SummaryFrame:
 
         # Link Entry and Result Textbox
         self.entry_link = Entry(self.prog1, width=150, relief=tk.SUNKEN, bg='turquoise')
-        self.smry_text = tkst.ScrolledText(self.prog1, state=tk.DISABLED, wrap=tk.WORD, width=110, height=46,
+        self.smry_text = tkst.ScrolledText(self.prog1, state=tk.DISABLED, wrap=tk.WORD, width=110, height=45,
                                            relief=tk.SUNKEN, bg='turquoise')
 
         self.entry_link.grid(row=0, column=1, sticky="news", pady=(3, 0))
@@ -36,7 +38,7 @@ class SummaryFrame:
 
         # Reset Button
         self.reset_button = Button(self.prog2, text="RESET", justify=tk.CENTER, height=5, pady=5,
-                                   command=self.reset_everything, bg="red", font=("Verdana", 12, 'bold'))
+                                   command=self.reset_everything, bg="red", font=("Verdana", 20, 'bold'))
         self.reset_button.pack()
         self.prog2.configure(bg="khaki3")
         self.prog3.configure(bg="khaki3")
@@ -64,7 +66,10 @@ class SummaryFrame:
         self.sentences = []
         self.title = ''
         self.bound = []
+        self.status = 0
+        self.keywords = []
 
+    '''
     def getSmryNormal(self, event):
 
         titlefont = Font(family="Times New Roman", size=20, weight="bold", underline=1)
@@ -83,7 +88,7 @@ class SummaryFrame:
         title, smry = lxrTest.generateSummary(link, 'default')
         self.smry_text.insert(tk.END, title + "\n\n")
         self.smry_text.tag_add("title", "1.0", "1.end")
-        self.smry_text.tag_configure("title", font=titlefont, foreground="gray")
+        self.smry_text.tag_configure("title", font=titlefont, foreground="DarkOrange3")
 
         self.smry_text.insert(tk.END, smry)
         self.smry_text.tag_add("content", "2.0", tk.END)
@@ -92,10 +97,12 @@ class SummaryFrame:
         self.smry_text.configure(state=tk.DISABLED)
         self.reset_button.configure(state=tk.NORMAL)
         self.entry_link.configure(state=tk.NORMAL)
+        '''
 
     def getSmryCustom(self, event):
-        titlefont = Font(family="Times New Roman", size=20, weight="bold", underline=1)
-        contentfont = Font(family="Interstate", size=14)
+        titlefont = Font(family="Times New Roman", size=22, weight="bold", underline=1)
+        keyfont = Font(family="Calibri", size=18, slant="italic")
+        contentfont = Font(family="Yu Gothic Medium", size=14)
         # DEFAULT_SUMMARY = 5
 
         # Disable reset button during processing, will enable later
@@ -114,53 +121,82 @@ class SummaryFrame:
         time.sleep(0.5)
 
         # Generate base summary of size 5
-        self.title, self.sentences, self.scores, self.bound = lxrTest.generateSummary(link, 'custom')
-        leng = self.scores.__len__()
-        DEFAULT_SUMMARY = int(round((leng / 5), 0))
-        # DEFAULT_SUMMARY = leng
-        print(DEFAULT_SUMMARY)
+        try:
+            self.status, self.title, self.sentences, self.scores, self.bound, self.keywords = lxrTest.generateSummary(
+                link,
+                'custom')
+        except ValueError:
+            tk.messagebox.showerror("Error", "Unable To Generate Summary")
+            self.reset_button.configure(state=tk.NORMAL)
+            self.entry_link.configure(state=tk.NORMAL)
 
-        self.slider.configure(from_=1, to=leng, showvalue=1, tickinterval=round((leng / 10), 0))
-        self.slider.grid()
+        if self.status == 0:
+            leng = self.scores.__len__()
+            DEFAULT_SUMMARY = int(round((leng / 5), 0))
+            # DEFAULT_SUMMARY = leng
 
-        final_list = np.sort(self.scores[:DEFAULT_SUMMARY])
-        # summary = [self.sentences[i] for i in final_list]  # Getting the summary based on summary length
-        prt = ''
-        tmp = ''
-        bl = -1
-        br = -1
+            key_string = 'KEYWORDS:'
+            print(self.keywords)
+            for key in self.keywords:
+                key_string = key_string + key + ', '
+            key_string = key_string[:-2]
 
-        for val, s in enumerate(final_list):
-            for val2 in range(len(self.bound)):
-                if val2 == 0:
-                    continue
-                else:
-                    if self.bound[val2 - 1] < s <= self.bound[val2]:
-                        if self.bound[val2 - 1] == bl and self.bound[val2] == br:
-                            print(self.sentences[s])
-                            tmp += self.sentences[s]
-                        else:
-                            prt += tmp + "\n\n"
-                            tmp = "" + self.sentences[s]
-                        bl = self.bound[val2 - 1]
-                        br = self.bound[val2]
-                        break
+            self.slider.configure(from_=1, to=leng, showvalue=1, tickinterval=round((leng / 10), 0))
+            self.slider.grid()
 
-            # prt += str(val + 1) + ".  " + s + "\n\n"
-        self.slider.set(DEFAULT_SUMMARY)
+            final_list = np.sort(self.scores[:DEFAULT_SUMMARY + 1])
+            # summary = [self.sentences[i] for i in final_list]  # Getting the summary based on summary length
+            prt = ''
+            tmp = ''
+            bl = -1
+            br = -1
 
-        # Inserting summary into the Textfield
-        self.smry_text.insert(tk.END, self.title + "\n\n")
-        self.smry_text.tag_add("title", "1.0", "1.end")
-        self.smry_text.tag_configure("title", font=titlefont, foreground="gray")
+            for val, s in enumerate(final_list):
+                for val2 in range(len(self.bound)):
+                    if val2 == 0:
+                        continue
+                    else:
+                        if self.bound[val2 - 1] < s <= self.bound[val2]:
+                            if self.bound[val2 - 1] == bl and self.bound[val2] == br:
+                                # print(self.sentences[s])
+                                tmp += self.sentences[s]
+                            else:
+                                prt += tmp + "\n\n"
+                                tmp = "" + self.sentences[s]
+                            bl = self.bound[val2 - 1]
+                            br = self.bound[val2]
+                            break
 
-        self.smry_text.insert(tk.END, prt)
-        self.smry_text.tag_add("content", "2.0", tk.END)
-        self.smry_text.tag_configure("content", font=contentfont)
+                # prt += str(val + 1) + ".  " + s + "\n\n"
 
+            self.reset_button.configure(state=tk.NORMAL)
+            self.entry_link.configure(state=tk.NORMAL)
+
+            self.slider.set(DEFAULT_SUMMARY)
+
+            self.title = re.sub(r'[\n\t]', r'', self.title)
+            self.title = re.sub(r'\s+', r' ', self.title)
+
+            # Inserting summary into the Textfield
+            self.smry_text.insert(tk.END, self.title + "\n\n")
+            self.smry_text.tag_add("title", "1.0", "1.end")
+            self.smry_text.tag_configure("title", font=titlefont, foreground="DarkOrange3")
+
+            self.smry_text.insert(tk.END, key_string + "\n")
+            self.smry_text.tag_add("key", "3.0", "3.end")
+            self.smry_text.tag_configure("key", font=keyfont, foreground="gray32")
+
+            self.smry_text.insert(tk.END, prt)
+            self.smry_text.tag_add("content", "4.0", tk.END)
+            self.smry_text.tag_configure("content", font=contentfont)
+
+        elif self.status == -69:
+            tk.messagebox.showerror("Error", "Invalid Link")
+        else:
+            tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
+
+        self.entry_link.delete('0', tk.END)
         self.smry_text.configure(state=tk.DISABLED)
-        self.reset_button.configure(state=tk.NORMAL)
-        self.entry_link.configure(state=tk.NORMAL)
 
     # Clears all text
     def reset_everything(self):
@@ -172,12 +208,16 @@ class SummaryFrame:
         self.scores = np.array([0])
         self.sentences = []
         self.title = ''
+        self.bound = []
+        self.status = 0
+        self.keywords = []
         self.slider.configure(from_=0, to=0, tickinterval=1)
         self.slider.grid_remove()
 
     def sliderUpdate(self, event):
-        titlefont = Font(family="Times New Roman", size=20, weight="bold", underline=1)
-        contentfont = Font(family="Interstate", size=14)
+        titlefont = Font(family="Times New Roman", size=22, weight="bold", underline=1)
+        keyfont = Font(family="Calibri", size=18, slant="italic")
+        contentfont = Font(family="Yu Gothic Medium", size=14)
 
         # Disable reset button during processing, will enable later
         self.reset_button.configure(state=tk.DISABLED)
@@ -186,12 +226,18 @@ class SummaryFrame:
 
         if currval == 0:
             return
+
+        key_string = 'KEYWORDS:'
+        print(self.keywords)
+        for key in self.keywords:
+            key_string = key_string + key + ', '
+        key_string = key_string[:-2]
+
         self.smry_text.configure(state=tk.NORMAL)
         self.smry_text.delete('1.0', tk.END)
         self.smry_text.update()
 
         final_list = np.sort(self.scores[:currval + 1])
-        print(final_list)
         # summary = [self.sentences[i] for i in final_list]  # Getting the summary based on summary length
         prt = ''
         tmp = ''
@@ -205,7 +251,7 @@ class SummaryFrame:
                 else:
                     if self.bound[val2 - 1] < s <= self.bound[val2]:
                         if self.bound[val2 - 1] == bl and self.bound[val2] == br:
-                            print(self.sentences[s])
+                            # print(self.sentences[s])
                             tmp += self.sentences[s]
                         else:
                             prt += tmp + "\n\n"
@@ -214,33 +260,46 @@ class SummaryFrame:
                         br = self.bound[val2]
                         break
 
+        self.title = re.sub(r'[\n\t]', r'', self.title)
+        self.title = re.sub(r'\s+', r' ', self.title)
+
+        self.reset_button.configure(state=tk.NORMAL)
+        self.entry_link.configure(state=tk.NORMAL)
+
         # Inserting summary into the Textfield
         self.smry_text.insert(tk.END, self.title + "\n\n")
         self.smry_text.tag_add("title", "1.0", "1.end")
-        self.smry_text.tag_configure("title", font=titlefont, foreground="gray")
+        self.smry_text.tag_configure("title", font=titlefont, foreground="DarkOrange3")
+
+        self.smry_text.insert(tk.END, key_string + "\n")
+        self.smry_text.tag_add("key", "3.0", "3.end")
+        self.smry_text.tag_configure("key", font=keyfont, foreground="gray32")
 
         self.smry_text.insert(tk.END, prt)
-        self.smry_text.tag_add("content", "2.0", tk.END)
+        self.smry_text.tag_add("content", "4.0", tk.END)
         self.smry_text.tag_configure("content", font=contentfont)
 
+        self.entry_link.delete('0', tk.END)
         self.smry_text.configure(state=tk.DISABLED)
-        self.reset_button.configure(state=tk.NORMAL)
-        self.entry_link.configure(state=tk.NORMAL)
 
 
 root = Tk()
 tabs = ttk.Notebook(root, height=800, width=1347)
-progover = Frame(root, bg="white")
-sm = SummaryFrame(progover)
-frame2 = Frame(root)
 
+progover = Frame(root, bg="white")
+frontover = Frame(root, bg="white")
+
+sm = SummaryFrame(progover)
+fm = FrontPageGrid(frontover)
+
+tabs.add(frontover, text="Frontpage")
 tabs.add(progover, text="Link")
-tabs.add(frame2, text="Hello")
 
 tabs.pack(side="top", fill="both")
 
-root.geometry("1347x820")
-# root.resizable(0, 0)
+root.geometry("1400x850")
+root.title('QNews')
+root.resizable(0, 0)
 root.mainloop()
 
 # https://docs.python.org/3/library/tkinter.ttk.html#combobox
@@ -251,3 +310,4 @@ root.mainloop()
 # https://stackoverflow.com/questions/3966303/tkinter-slider-how-to-trigger-the-event-only-when-the-iteraction-is-complete#comment75690571_16970862
 # https://stackoverflow.com/questions/47200625/how-to-make-ttk-scale-behave-more-like-tk-scale
 # https://www.tutorialspoint.com/python/tk_scale.htm
+# https://infohost.nmt.edu/tcc/help/pubs/tkinter/web/ttk-Notebook.html
