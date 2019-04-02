@@ -28,4 +28,4 @@ setup(
     version="0.1.1",
     description="Summarize the News for you",
     options={"build_exe": build_exe_options},
-    executables=[Executable("gui_30.py", base=base, icon='xyz.ico')])
+    executables=[Executable("gui_30.py", base=base, icon='app.ico')])
