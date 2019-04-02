@@ -142,6 +142,7 @@ class SummaryFrame:
     def reset_everything(self):
         self.smry_text.configure(state=tk.NORMAL)
         self.smry_text.delete('1.0', tk.END)
+        self.smry_text.delete('1.0', tk.END)
         self.smry_text.configure(state=tk.DISABLED)
 
         self.entry_link.delete('0', tk.END)

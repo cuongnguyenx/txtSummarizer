@@ -24,13 +24,13 @@ class FrontPageGrid:
         self.title_lbl.pack()
 
         # Photos to populate buttons
-        self.photo_ny = ImageTk.PhotoImage(Image.open('./imgs/nytimes_2.jpg'))
-        self.photo_wapo = ImageTk.PhotoImage(Image.open('./imgs/wapo_2.jpg'))
-        self.photo_bbc = ImageTk.PhotoImage(Image.open('./imgs/bbc_2.jpg'))
-        self.photo_reuters = ImageTk.PhotoImage(Image.open('./imgs/reuters.png'))
-        self.photo_guardian = ImageTk.PhotoImage(Image.open('./imgs/guardian.png'))
-        self.photo_wsj = ImageTk.PhotoImage(Image.open('./imgs/wsj_2.jpg'))
-        self.photo_ap = ImageTk.PhotoImage(Image.open('./imgs/apnews.png'))
+        self.photo_ny = ImageTk.PhotoImage(Image.open('nytimes_2.jpg'))
+        self.photo_wapo = ImageTk.PhotoImage(Image.open('wapo_2.jpg'))
+        self.photo_bbc = ImageTk.PhotoImage(Image.open('bbc_2.jpg'))
+        self.photo_reuters = ImageTk.PhotoImage(Image.open('reuters.png'))
+        self.photo_guardian = ImageTk.PhotoImage(Image.open('guardian.png'))
+        # self.photo_wsj = ImageTk.PhotoImage(Image.open('./imgs/wsj_2.jpg'))
+        self.photo_ap = ImageTk.PhotoImage(Image.open('apnews.png'))
 
         # Declaring buttons and putting them in place
         self.btn_ny = Button(self.main, bg='white', width=435, height=350, image=self.photo_ny)
@@ -63,7 +63,7 @@ class FrontPageGrid:
 
     def ny_listen(self, event):
         # Grab the list of links and titles from the front page of nytimes. See grabheadline.py
-        currlinks, currtitles = grabheadline.grabfront('https://nytimes.com')
+        currlinks, currtitles, currcategories = grabheadline.grabfront('https://nytimes.com')
 
         # If there are no links to be grabbed, it must mean there's no Internet connection
         if len(currlinks) == 0:
@@ -72,77 +72,129 @@ class FrontPageGrid:
             # Replace the GUI of the front grid with the generated headline list of the clicked website (i.e nytimes here)
             self.title.pack_forget()
             self.main.pack_forget()
-            fpl = FrontPageList(self.currMaster, 'New York Times', currlinks, currtitles)
+            fpl = FrontPageList(self.currMaster, 'New York Times', currlinks, currtitles, currcategories)
 
     def wapo_listen(self, event):
-        currlinks, currtitles = grabheadline.grabfront('https://washingtonpost.com')
+        currlinks, currtitles, currcategories = grabheadline.grabfront('https://washingtonpost.com')
         if len(currlinks) == 0:
             tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
         else:
             self.title.pack_forget()
             self.main.pack_forget()
-            fpl = FrontPageList(self.currMaster, 'Washington Post', currlinks, currtitles)
+            fpl = FrontPageList(self.currMaster, 'Washington Post', currlinks, currtitles, currcategories)
 
     def reuters_listen(self, event):
-        currlinks, currtitles = grabheadline.grabfront('https://reuters.com')
+        currlinks, currtitles, currcategories = grabheadline.grabfront('https://reuters.com')
         if len(currlinks) == 0:
             tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
         else:
             self.title.pack_forget()
             self.main.pack_forget()
-            fpl = FrontPageList(self.currMaster, 'Reuters', currlinks, currtitles)
+            fpl = FrontPageList(self.currMaster, 'Reuters', currlinks, currtitles, currcategories)
 
     def bbc_listen(self, event):
-        currlinks, currtitles = grabheadline.grabfront('https://bbc.com')
+        currlinks, currtitles, currcategories = grabheadline.grabfront('https://bbc.com')
         if len(currlinks) == 0:
             tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
         else:
             self.title.pack_forget()
             self.main.pack_forget()
-            fpl = FrontPageList(self.currMaster, 'BBC', currlinks, currtitles)
+            fpl = FrontPageList(self.currMaster, 'BBC', currlinks, currtitles, currcategories)
 
     def guardian_listen(self, event):
-        currlinks, currtitles = grabheadline.grabfront('https://www.theguardian.com/international')
+        currlinks, currtitles, currcategories = grabheadline.grabfront('https://www.theguardian.com/international')
         if len(currlinks) == 0:
             tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
         else:
             self.title.pack_forget()
             self.main.pack_forget()
-            fpl = FrontPageList(self.currMaster, 'The Guardian', currlinks, currtitles)
+            fpl = FrontPageList(self.currMaster, 'The Guardian', currlinks, currtitles, currcategories)
 
     def wsj_listen(self, event):
-        currlinks, currtitles = grabheadline.grabfront('https://wsj.com')
+        currlinks, currtitles, currcategories = grabheadline.grabfront('https://wsj.com')
         if len(currlinks) == 0:
             tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
         else:
             self.title.pack_forget()
             self.main.pack_forget()
-            fpl = FrontPageList(self.currMaster, 'Wall Street Journal', currlinks, currtitles)
+            fpl = FrontPageList(self.currMaster, 'Wall Street Journal', currlinks, currtitles, currcategories)
 
     def ap_listen(self, event):
-        currlinks, currtitles = grabheadline.grabfront('https://apnews.com')
+        currlinks, currtitles, currcategories = grabheadline.grabfront('https://apnews.com')
         if len(currlinks) == 0:
             tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
         else:
             self.title.pack_forget()
             self.main.pack_forget()
-            fpl = FrontPageList(self.currMaster, 'Associated Press', currlinks, currtitles)
+            fpl = FrontPageList(self.currMaster, 'Associated Press', currlinks, currtitles, currcategories)
+
+    def latimes_listen(self, event):
+        currlinks, currtitles, currcategories = grabheadline.grabfront('https://latimes.com')
+        if len(currlinks) == 0:
+            tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
+        else:
+            self.title.pack_forget()
+            self.main.pack_forget()
+            fpl = FrontPageList(self.currMaster, 'Los Angeles Times', currlinks, currtitles, currcategories)
+
+    def huffington_listen(self, event):
+        currlinks, currtitles, currcategories = grabheadline.grabfront("http://huffpost.com")
+        if len(currlinks) == 0:
+            tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
+        else:
+            self.title.pack_forget()
+            self.main.pack_forget()
+            fpl = FrontPageList(self.currMaster, 'Huffington Post', currlinks, currtitles, currcategories)
+
+    def npr_listen(self, event):
+        currlinks, currtitles, currcategories = grabheadline.grabfront("https://www.npr.org/")
+        if len(currlinks) == 0:
+            tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
+        else:
+            self.title.pack_forget()
+            self.main.pack_forget()
+            fpl = FrontPageList(self.currMaster, 'National Public Radio', currlinks, currtitles, currcategories)
 
 
 class FrontPageList:
-    def __init__(self, master, title, currlinks, currtitles):
-        self.sub = Frame(master, bg='khaki3', width=1370, height=820)
+    def __init__(self, master, title, currlinks, currtitles, currcategories):
+        self.subcombine = Frame(master, bg='khaki3', width=1370, height=820)
+        self.subup = Frame(self.subcombine, bg='khaki3', width=1370, height=200)
+        self.subdown = Frame(self.subcombine, bg='khaki3', width=1370, height=620)
         self.currMaster = master
 
         self.currtitles = currtitles
         self.currlinks = currlinks
+        self.currcategories = currcategories
+        self.available = []
         self.uptitle = title
+        self.categ_dict = dict()
 
-        self.subtitle = Label(self.sub, text=self.uptitle, font=('Yu Gothic Medium', 26, 'bold'), padx=5, pady=5,
+        for i in range(len(self.currtitles)):
+            self.available.append(i)
+
+        for categ in self.currcategories:
+            if categ not in self.categ_dict.keys():
+                self.categ_dict[categ] = 1
+            else:
+                self.categ_dict[categ] += 1
+
+        self.subtitle = Label(self.subup, text=self.uptitle, font=('Yu Gothic Medium', 26, 'bold'), padx=5, pady=5,
                               bg='khaki3')
-        self.subtitle.pack(side='top')
+        self.subtitle.pack()
 
-        self.listhead = Listbox(self.sub, height=22, highlightcolor='blue', font=('Yu Mincho', 18),
+        drop_style = ttk.Style().configure('list.TListbox', padding=(5, 5))
+
+        choices_categ = ['All (%d)' % len(currlinks)]
+        for categ in self.categ_dict.keys():
+            choices_categ.append((categ + ' (%d)') % self.categ_dict[categ])
+        self.size_drop = ttk.Combobox(self.subup, value=choices_categ, width=26, state='readonly', style=drop_style)
+
+        self.size_drop.current(0)
+        self.size_drop.pack()
+        self.size_drop.bind("<<ComboboxSelected>>", self.changeCategory)
+
+        self.listhead = Listbox(self.subdown, height=21, highlightcolor='blue', font=('Yu Mincho', 18),
                                 selectmode=tk.SINGLE)
         self.listhead.pack(expand=1, fill=tk.BOTH)
         self.listhead.bind('<<ListboxSelect>>', self.genSummary)
@@ -150,29 +202,49 @@ class FrontPageList:
         for val, title in enumerate(currtitles):
             self.listhead.insert(val + 1, title)
 
-        self.backmain = Button(self.sub, text='Return', pady=5, font=('Verdana', 20, 'bold'), bg='red')
+        self.backmain = Button(self.subdown, text='Return', pady=5, font=('Verdana', 20, 'bold'), bg='red')
         self.backmain.bind('<ButtonRelease-1>', self.retMain)
         self.backmain.pack()
 
-        self.sub.pack(fill=BOTH)
+        self.subup.pack(fill=BOTH)
+        self.subdown.pack(fill=BOTH)
+        self.subcombine.pack(fill=BOTH)
 
     def genSummary(self, event):
-        x = self.listhead.curselection()
-        print(x)
-        self.sub.pack_forget()
-        if len(x) != 0:
-            sum_frame = SummaryFrame(self.currlinks[x[0]], self.currMaster, self.uptitle, self.currlinks,
-                                     self.currtitles)
+        selection = self.listhead.curselection()
+        self.subcombine.pack_forget()
+        if len(selection) != 0:
+            index_sel = self.available[selection[0]]
+            print(index_sel)
+            sum_frame = SummaryFrame_Front(self.currlinks[index_sel], self.currMaster, self.uptitle, self.currlinks,
+                                           self.currtitles, self.currcategories)
             sum_frame.getSmryCustom()
 
     def retMain(self, event):
-        self.sub.pack_forget()
+        self.subcombine.pack_forget()
         self.listhead.delete(0, tk.END)
         fpg = FrontPageGrid(self.currMaster)
 
+    def changeCategory(self, event):
+        self.listhead.delete(0, tk.END)
+        currCateg = self.size_drop.get()
+        currCateg = currCateg[0:currCateg.index(' (')]
+        self.available = []
+        if currCateg == 'All':
+            for i in range(len(self.currtitles)):
+                self.available.append(i)
+                self.listhead.insert(i + 1, self.currtitles[i])
+        else:
+            count = 1
+            for i in range(len(self.currtitles)):
+                if self.currcategories[i] == currCateg:
+                    self.available.append(i)
+                    self.listhead.insert(count, self.currtitles[i])
+                    count = count + 1
 
-class SummaryFrame:
-    def __init__(self, url, master, title, currlinks, currtitles):
+
+class SummaryFrame_Front:
+    def __init__(self, url, master, title, currlinks, currtitles, currcategories):
         self.currMaster = master
         self.prog1 = Frame(master, bg="khaki3")  # Frame for Entry, Textbox and their labels
         self.prog2 = Frame(master, bg='khaki3')  # Frame for RESET Button
@@ -181,6 +253,7 @@ class SummaryFrame:
         self.uptitle = title
         self.currlinks = currlinks
         self.currtitles = currtitles
+        self.currcategories = currcategories
 
         # Labels "Enter URL" and "Output Summary:
         self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg="khaki3", font=("Verdana", 12, 'bold'),
@@ -324,7 +397,7 @@ class SummaryFrame:
         self.prog1.pack_forget()
         self.prog2.pack_forget()
         self.prog3.pack_forget()
-        fpl = FrontPageList(self.currMaster, self.uptitle, self.currlinks, self.currtitles)
+        fpl = FrontPageList(self.currMaster, self.uptitle, self.currlinks, self.currtitles, self.currcategories)
 
     def sliderUpdate(self, event):
         titlefont = Font(family="Times New Roman", size=22, weight="bold", underline=1)
@@ -387,7 +460,7 @@ class SummaryFrame:
 
 '''
 root = Tk()
-fp = FrontPageGrid(root)
+fp = FrontPageGrid(root)F
 root.geometry("1370x820")
 root.mainloop()
 '''

@@ -163,6 +163,7 @@ def calculate_idf(lang):
             word = words[0:sep]
             score = float(words[sep + 5:])
             idf_score[word] = score
+
     elif lang == 'vi':
         for words in file_vi.readlines():
             sep = words.index(' !@# ')

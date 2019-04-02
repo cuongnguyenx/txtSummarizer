@@ -3,11 +3,15 @@ import inflect
 import numpy as np
 import time
 import nltk
+from nltk.stem import WordNetLemmatizer
 
 
 # https://github.com/aneesha/RAKE/blob/master/rake.py
+
+
 # Split text into separate lexical clauses (so not just sentences but also sub-clauses within a sentence)
 # Takes in the original text of the article, and return the list of lexical clauses
+# e.g  This week, everyday at five o'clock, I go to the Health Center => ['This week', 'everyday at five o'clock', 'I go to the Health Center']
 def split_sentences(text):
     """
     Utility function to return a list of sentences.
@@ -19,28 +23,36 @@ def split_sentences(text):
 
 
 def split_words(sentences):
-    pp = inflect.engine()
-    stoplist = open('stopwords_en.txt', 'r', encoding='utf-8')
-    stops = []
+    """
+        Utility function to return a list of sentences.
+        @param sentences The list of sentences that shall be split further into individual words.
+    """
+    # pp = inflect.engine() DOESN'T WORK, INDISCRIMINANTLY REMOVE 'S' for words like "progress"
+    stoplist = open('stopwords_en.txt', 'r',
+                    encoding='utf-8')  # Taken from https://github.com/andersjo/pyrouge/blob/master/tools/ROUGE-1.5.5/data/smart_common_words.txt
+    stops = []  # List of words that are irrelevant to the higher meaning of sentences
+    lemmatizer = WordNetLemmatizer()
     for words in stoplist.readlines():
         stops.append(words.strip('\n'))
 
-    bag_words = []
-    word_dict = dict()
-    inverse_word_dict = dict()
+    bag_words = []  # List of the bags of words formed from the sentences of the article
+    word_dict = dict()  # Map the word to a numeric index i.e ('cow', 23)
+    inverse_word_dict = dict()  # Same as above, but now the index is the key i.e (23, 'cow'
     val = 0
 
-    curr_key = ''
-    for sentence in sentences:
-        default = nltk.word_tokenize(sentence)
-        tagged = nltk.pos_tag(default)
+    curr_key = ''  # Current keyword, keywords can be formed from many tokens, but they have to be continious
+    for sentence in sentences:  # Example clause : 'President Trump will visit Lima'
+        default = nltk.word_tokenize(sentence)  # => ['President', 'Trump', 'will', 'visit', 'Lima']
+        # print(default)
+        tagged = nltk.pos_tag(
+            default)  # => [('President', 'NNP'), ('Trump', 'NNP'), ('will', 'MD'), ('visit', 'VB'), ('Lima', 'NNP')]
         # print(tagged)
 
         val_temp = 0
 
         for elements in tagged:
-            if 'NN' not in elements[1]:
-                default.pop(val_temp)
+            if 'NN' not in elements[1]:  # We only consider nouns or words forming noun phrases as part of keywords
+                default.pop(val_temp)  # Remove any other word type from the @default array
                 val_temp = val_temp - 1
             val_temp = val_temp + 1
 
@@ -54,8 +66,10 @@ def split_words(sentences):
 
         for words in default:
             if not any([stop == words.lower() for stop in stops]) and len(words) > 4:
-                low = words.lower()
-                # out = pp.singular_noun(low)
+                if str.islower(words[0]):
+                    low = words.lower()
+                else:
+                    low = words.lower()
 
                 curr_key += ' ' + low
                 if low not in word_dict.keys():
@@ -66,6 +80,7 @@ def split_words(sentences):
             else:
                 if curr_key != '':
                     temp.append(curr_key[1:])
+                    # print(curr_key)
                 curr_key = ''
 
         if len(temp) > 0:
@@ -111,7 +126,9 @@ def calc_score(bag_words, word_dict, inverse_word_dict):
 
 def getHighestKeywords(keyword_score, num_keys):
     sred = sorted(keyword_score.items(), key=lambda value: value[1] / (len(value[0].split(' ')) ** 1), reverse=True)
-    # print(sred)
+    if num_keys == 999 or num_keys > len(sred):
+        num_keys = len(sred)
+
     keys_out = 0
     taken_keys = []
     key_array = []
@@ -121,6 +138,8 @@ def getHighestKeywords(keyword_score, num_keys):
     for keys in sred:
         splitted = keys[0].split()
         if len(keys[0]) < 5:
+            continue
+        if keys[1] < 3:
             continue
 
         if len(keys[0].split()) <= curr_lim:
@@ -140,9 +159,10 @@ def getHighestKeywords(keyword_score, num_keys):
 
                 taken_keys.extend(splitted)
                 keys_out = keys_out + 1
-        if keys_out == num_keys:
+        if keys_out == num_keys and num_keys != len(sred):
             return key_array
         # print(keys)
+    return key_array
 
 
 def open_file(direc):
@@ -153,6 +173,7 @@ def open_file(direc):
     generate_from_article(inp)
 
 
-def generate_from_article(text):
+def generate_from_article(text, keys_ret):
     bag_words, word_dict, inverse_word_dict = split_words(split_sentences(text))
-    return getHighestKeywords(calc_score(bag_words, word_dict, inverse_word_dict), 10)
+    # print(bag_words)
+    return getHighestKeywords(calc_score(bag_words, word_dict, inverse_word_dict), keys_ret)
