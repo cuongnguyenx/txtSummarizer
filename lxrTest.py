@@ -7,6 +7,7 @@ import lxml
 import nltk
 import time
 import rake
+import http
 
 nltk.data.path.append('./nltk_data')
 
@@ -25,6 +26,9 @@ def parseText(link):
         scraped_data = urlopen(req)  # Try grabbing the source code of the page
         status = 0
     except ValueError:  # Invalid link
+        status = -69
+        return status, lang, title, paragraphs
+    except http.client.RemoteDisconnected:
         status = -69
         return status, lang, title, paragraphs
     except urllib.error.URLError:  # Unable to open link (Internet down?)

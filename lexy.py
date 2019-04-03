@@ -6,11 +6,11 @@ import os
 import nltk
 import string
 import time
-from underthesea import word_tokenize
+# from underthesea import word_tokenize
 import re
 
-path_en = 'K:/bbc/combi'
-path_vi = 'K:/vi_txt/Train_Full/Chinh tri Xa hoi'
+# path_en = 'K:/bbc/combi'
+# path_vi = 'K:/vi_txt/Train_Full/Chinh tri Xa hoi'
 documents = []
 
 
@@ -96,16 +96,16 @@ def load_vi(direc):
     return docs
 '''
 
-
 # Tokenize sentence into distinct words using the Punkt Sentence Tokenizer package in NLTK
 def tokenize_words(sentence, lang):
     if lang == 'en':
         stop = stopwords.words('english') + list(string.punctuation)  # Common words that are not informative
         return [i for i in nltk.word_tokenize(sentence.lower(), 'english') if i not in stop and str.isalpha(i)]
-    elif lang == 'vi':
-        stop = load_stop_vi('stopwords_vi.txt') + list(string.punctuation)
-        sent = word_tokenize(sentence.lower())
-        return [i for i in sent if i not in stop and str.isalpha(i)]
+
+    # elif lang == 'vi':
+    # stop = load_stop_vi('stopwords_vi.txt') + list(string.punctuation)
+    # sent = word_tokenize(sentence.lower())
+    # return [i for i in sent if i not in stop and str.isalpha(i)]
 
 
 '''
@@ -144,7 +144,6 @@ def calculate_idf(docs, lang):
         idf_out.write(str(k)+" !@# "+str(idf_score[k])+"\n")
     return idf_score
 '''
-
 
 # Calculate the IDF score using dictionary generated from a prepared corpus
 def calculate_idf(lang):
@@ -207,8 +206,7 @@ def idf_modified_cosine(idf_sc, tfs, i, j):
     return cos_dis
 
 
-'''
-def sentence_similarity(idf_sc sent_1, sent_2):
+def sentence_similarity(idf_sc, sent_1, sent_2):
     arr_1 = tokenize_words(sent_1)  # Tokenize sentences into words, also remove stopwords in process
     arr_2 = tokenize_words(sent_2)
 
@@ -216,7 +214,6 @@ def sentence_similarity(idf_sc sent_1, sent_2):
     tf_2 = Counter(arr_2)
     cos_simi = idf_modified_cosine(idf_sc, [tf_1, tf_2], 0, 1)
     return cos_simi
-'''
 
 
 def calculate_sim_matrix(idf_sc, tf_scores):

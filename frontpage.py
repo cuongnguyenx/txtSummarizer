@@ -14,13 +14,14 @@ import tkinter.scrolledtext as tkst
 
 class FrontPageGrid:
     def __init__(self, master):
+        bg_color = 'khaki3'
 
         self.currMaster = master  # the master should be the root
-        self.main = Frame(master, bg='khaki3')  # Main Frame, contains Image (2x3) Grid
-        self.title = Frame(master, bg='khaki3')  # Contains the title "WHAT"S ON THE FRONT PAGE"
+        self.main = Frame(master, bg=bg_color)  # Main Frame, contains Image (2x3) Grid
+        self.title = Frame(master, bg=bg_color)  # Contains the title "WHAT"S ON THE FRONT PAGE"
 
         self.title_lbl = Label(self.title, justify=tk.CENTER, font=("Yu Gothic Medium", 30, 'bold'),
-                               text="WHAT'S ON THE FRONT PAGE ?", bg='khaki3')
+                               text="WHAT'S ON THE FRONT PAGE ?", bg=bg_color)
         self.title_lbl.pack()
 
         # Photos to populate buttons
@@ -158,9 +159,11 @@ class FrontPageGrid:
 
 class FrontPageList:
     def __init__(self, master, title, currlinks, currtitles, currcategories):
-        self.subcombine = Frame(master, bg='khaki3', width=1370, height=820)
-        self.subup = Frame(self.subcombine, bg='khaki3', width=1370, height=200)
-        self.subdown = Frame(self.subcombine, bg='khaki3', width=1370, height=620)
+        self.bg_color = 'khaki3'
+        self.button_color = 'red'
+        self.subcombine = Frame(master, bg=self.bg_color, width=1370, height=820)
+        self.subup = Frame(self.subcombine, bg=self.bg_color, width=1370, height=200)
+        self.subdown = Frame(self.subcombine, bg=self.bg_color, width=1370, height=620)
         self.currMaster = master
 
         self.currtitles = currtitles
@@ -180,7 +183,7 @@ class FrontPageList:
                 self.categ_dict[categ] += 1
 
         self.subtitle = Label(self.subup, text=self.uptitle, font=('Yu Gothic Medium', 26, 'bold'), padx=5, pady=5,
-                              bg='khaki3')
+                              bg=self.bg_color)
         self.subtitle.pack()
 
         drop_style = ttk.Style().configure('list.TListbox', padding=(5, 5))
@@ -202,7 +205,7 @@ class FrontPageList:
         for val, title in enumerate(currtitles):
             self.listhead.insert(val + 1, title)
 
-        self.backmain = Button(self.subdown, text='Return', pady=5, font=('Verdana', 20, 'bold'), bg='red')
+        self.backmain = Button(self.subdown, text='Return', pady=5, font=('Verdana', 20, 'bold'), bg=self.button_color)
         self.backmain.bind('<ButtonRelease-1>', self.retMain)
         self.backmain.pack()
 
@@ -246,9 +249,12 @@ class FrontPageList:
 class SummaryFrame_Front:
     def __init__(self, url, master, title, currlinks, currtitles, currcategories):
         self.currMaster = master
-        self.prog1 = Frame(master, bg="khaki3")  # Frame for Entry, Textbox and their labels
-        self.prog2 = Frame(master, bg='khaki3')  # Frame for RESET Button
-        self.prog3 = Frame(master, bg='khaki3')  # Frame for length slider
+        self.bg_color = 'khaki3'
+        self.button_color = 'red'
+
+        self.prog1 = Frame(master, bg=self.bg_color)  # Frame for Entry, Textbox and their labels
+        self.prog2 = Frame(master, bg=self.bg_color)  # Frame for RESET Button
+        self.prog3 = Frame(master, bg=self.bg_color)  # Frame for length slider
         self.url = url
         self.uptitle = title
         self.currlinks = currlinks
@@ -256,7 +262,7 @@ class SummaryFrame_Front:
         self.currcategories = currcategories
 
         # Labels "Enter URL" and "Output Summary:
-        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg="khaki3", font=("Verdana", 12, 'bold'),
+        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg=self.bg_color, font=("Verdana", 12, 'bold'),
                               relief=tk.SUNKEN)
 
         # Put the labels into the grid, lbl_link at (0,0) and lbl_smry at (1,0)
@@ -267,13 +273,13 @@ class SummaryFrame_Front:
                                            relief=tk.SUNKEN, bg='turquoise')
         self.smry_text.grid(row=1, column=1, sticky='news', pady=(0, 5))
 
-        self.back_button = Button(self.prog2, text="RETURN", justify=tk.CENTER, height=5, pady=5, bg="red",
+        self.back_button = Button(self.prog2, text="RETURN", justify=tk.CENTER, height=5, pady=5, bg=self.button_color,
                                   font=("Verdana", 20, 'bold'))
         self.back_button.bind('<Button-1>', self.backToList)
         self.back_button.pack()
 
-        self.prog2.configure(bg="khaki3")
-        self.prog3.configure(bg="khaki3")
+        self.prog2.configure(bg=self.bg_color)
+        self.prog3.configure(bg=self.bg_color)
         self.prog1.configure(width=100)
         # Bind the Entry to the getSmry event through pressing Return
 

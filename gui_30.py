@@ -15,10 +15,11 @@ for filename in os.listdir("build"):
 
 root = Tk()
 tabs = ttk.Notebook(root, height=800, width=1347)
+bg_color = 'khaki3'
 
-progover = Frame(root, bg="white")
-frontover = Frame(root, bg="white")
-keyover = Frame(root, bg='khaki3')
+progover = Frame(root, bg=bg_color)
+frontover = Frame(root, bg=bg_color)
+keyover = Frame(root, bg=bg_color)
 
 sm = SummaryFrame(progover)
 fm = FrontPageGrid(frontover)

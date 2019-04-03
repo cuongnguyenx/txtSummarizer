@@ -5,14 +5,14 @@ from cx_Freeze import setup, Executable
 # Dependencies are automatically detected, but it might need fine tuning.
 build_exe_options = dict(packages=["tkinter", "numpy", "bs4", "nltk", "PIL", "multiprocessing"],
                          includes=["multiprocessing.pool"],
-                         include_files=["lxrTest.py", "frontpage.py", "grabheadline.py", "idf_vi.txt",
+                         include_files=["lxrTest.py", "frontpage.py", "grabheadline.py",
                                         "idf_en.txt", "keyword_interface.py", "keyword_search.py", "keywords_gui.py",
-                                        "lexy.py", "rake.py",
-                                        "sf.py", "sfk.py", "stopwords_en.txt", "vi.pickle", "./imgs/bbc_2.jpg",
+                                        "lexy.py", "rake.py", "vi.pickle",
+                                        "sf.py", "sfk.py", "stopwords_en.txt", "./imgs/bbc_2.jpg",
                                         "./imgs/nytimes_2.jpg", './imgs/wapo_2.jpg', './imgs/reuters.png',
                                         './imgs/guardian.png', './imgs/apnews.png', 'tcl86t.dll', 'tk86t.dll',
                                         'nltk_data/'],
-                         excludes=['matplotlib', 'gensim', 'keras', 'sklearn', 'scipy'])
+                         excludes=['matplotlib', 'gensim', 'keras', 'sklearn', 'scipy', 'underthesea'])
 
 os.environ['TCL_LIBRARY'] = "C:/Users/CUONG/AppData/Local/Programs/Python/Python36-32/tcl/tcl8.6"
 os.environ['TK_LIBRARY'] = "C:/Users/CUONG/AppData/Local/Programs/Python/Python36-32/tcl/tk8.6"
