@@ -15,7 +15,7 @@ for filename in os.listdir("build"):
 
 root = Tk()
 tabs = ttk.Notebook(root, height=800, width=1347)
-bg_color = 'khaki3'
+bg_color = 'gray67'
 
 progover = Frame(root, bg=bg_color)
 frontover = Frame(root, bg=bg_color)
@@ -31,7 +31,7 @@ tabs.add(progover, text="Summary From Link")
 
 tabs.pack(side="top", fill="both")
 
-root.geometry("1400x850")
+root.geometry("1380x840")
 root.title('QNews')
 root.resizable(0, 0)
 root.mainloop()

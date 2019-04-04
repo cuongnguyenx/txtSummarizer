@@ -12,14 +12,17 @@ class SummaryFrame:
     # TODO Implement multiprocessing to speed up runtime
     # TODO Prettify GUI
     def __init__(self, master):
-        self.prog1 = Frame(master, bg="khaki3")  # Frame for Entry, Textbox and their labels
-        self.prog2 = Frame(master, bg='khaki3')  # Frame for RESET Button
-        self.prog3 = Frame(master, bg='khaki3')  # Frame for length slider
+        bg_color = 'gray82'
+        button_color = 'gray27'
+        button_text_color = 'ghost white'
+        self.prog1 = Frame(master, bg=bg_color)  # Frame for Entry, Textbox and their labels
+        self.prog2 = Frame(master, bg=bg_color)  # Frame for RESET Button
+        self.prog3 = Frame(master, bg=bg_color)  # Frame for length slider
 
         # Labels "Enter URL" and "Output Summary:
-        self.lbl_link = Label(self.prog1, text="Enter URL: ", bg="khaki3", font=("Verdana", 12, 'bold'),
+        self.lbl_link = Label(self.prog1, text="Enter URL: ", bg=bg_color, font=("Verdana", 12, 'bold'),
                               relief=tk.SUNKEN)
-        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg="khaki3", font=("Verdana", 12, 'bold'),
+        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg=bg_color, font=("Verdana", 12, 'bold'),
                               relief=tk.SUNKEN)
 
         # Put the labels into the grid, lbl_link at (0,0) and lbl_smry at (1,0)
@@ -36,10 +39,12 @@ class SummaryFrame:
 
         # Reset Button
         self.reset_button = Button(self.prog2, text="RESET", justify=tk.CENTER, height=5, pady=5,
-                                   command=self.reset_everything, bg="red", font=("Verdana", 20, 'bold'))
+                                   command=self.reset_everything, bg=button_color, fg=button_text_color,
+                                   font=("Verdana", 20, 'bold'))
         self.reset_button.pack()
-        self.prog2.configure(bg="khaki3")
-        self.prog3.configure(bg="khaki3")
+        self.prog2.configure(bg=bg_color)
+        self.prog3.configure(bg=bg_color)
+        self.prog3.configure(bg=bg_color)
         self.prog1.configure(width=100)
         # Bind the Entry to the getSmry event through pressing Return
         self.entry_link.bind("<Return>", self.getSmryCustom)
@@ -105,6 +110,7 @@ class SummaryFrame:
 
         # Disable reset button during processing, will enable later
         self.reset_button.configure(state=tk.DISABLED)
+        self.slider.configure(state=tk.DISABLED)
 
         # Get text from User Link
         link = self.entry_link.get()
@@ -128,6 +134,7 @@ class SummaryFrame:
             self.reset_button.configure(state=tk.NORMAL)
             self.entry_link.configure(state=tk.NORMAL)
 
+        print(self.sentences)
         if self.status == 0:
             leng = self.scores.__len__()
             DEFAULT_SUMMARY = int(round((leng / 5), 0))
@@ -149,6 +156,7 @@ class SummaryFrame:
             bl = -1
             br = -1
 
+            # print(self.bound)
             for val, s in enumerate(final_list):
                 for val2 in range(len(self.bound)):
                     if val2 == 0:
@@ -169,6 +177,7 @@ class SummaryFrame:
 
             self.reset_button.configure(state=tk.NORMAL)
             self.entry_link.configure(state=tk.NORMAL)
+            self.slider.configure(state=tk.NORMAL)
 
             self.slider.set(DEFAULT_SUMMARY)
 
@@ -190,8 +199,15 @@ class SummaryFrame:
 
         elif self.status == -69:
             tk.messagebox.showerror("Error", "Invalid Link")
+            self.reset_button.configure(state=tk.NORMAL)
+            self.entry_link.configure(state=tk.NORMAL)
+            self.slider.configure(state=tk.NORMAL)
         else:
             tk.messagebox.showerror("Error", "Failed to Retrieve Website. No Internet Connection?")
+            self.reset_button.configure(state=tk.NORMAL)
+            self.entry_link.configure(state=tk.NORMAL)
+            self.slider.configure(state=tk.NORMAL)
+
 
         self.entry_link.delete('0', tk.END)
         self.smry_text.configure(state=tk.DISABLED)
@@ -226,7 +242,7 @@ class SummaryFrame:
             return
 
         key_string = 'KEYWORDS:'
-        print(self.keywords)
+        # print(self.keywords)
         for key in self.keywords:
             key_string = key_string + key + ', '
         key_string = key_string[:-2]

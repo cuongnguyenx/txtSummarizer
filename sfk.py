@@ -15,10 +15,13 @@ class summaryFrame_Key:
     def __init__(self, *args):
         self.currMaster = args[0]
         print(self.currMaster)
+        bg_color = 'gray82'
+        button_color = 'gray27'
+        button_text_color = 'ghost white'
 
-        self.prog1 = Frame(self.currMaster, bg="khaki3")  # Frame for Entry, Textbox and their labels
-        self.prog2 = Frame(self.currMaster, bg='khaki3')  # Frame for RESET Button
-        self.prog3 = Frame(self.currMaster, bg='khaki3')  # Frame for length slider
+        self.prog1 = Frame(self.currMaster, bg=bg_color)  # Frame for Entry, Textbox and their labels
+        self.prog2 = Frame(self.currMaster, bg=bg_color)  # Frame for RESET Button
+        self.prog3 = Frame(self.currMaster, bg=bg_color)  # Frame for length slider
         self.url = ''
         self.uptitle = ''
 
@@ -34,7 +37,7 @@ class summaryFrame_Key:
             self.uptitle = self.currtitles[self.index_sel]
 
         # Labels "Enter URL" and "Output Summary:
-        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg="khaki3", font=("Verdana", 12, 'bold'),
+        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg=bg_color, font=("Verdana", 12, 'bold'),
                               relief=tk.SUNKEN)
 
         # Put the labels into the grid, lbl_link at (0,0) and lbl_smry at (1,0)
@@ -45,13 +48,14 @@ class summaryFrame_Key:
                                            relief=tk.SUNKEN, bg='turquoise')
         self.smry_text.grid(row=1, column=1, sticky='news', pady=(0, 5))
 
-        self.back_button = Button(self.prog2, text="RETURN", justify=tk.CENTER, height=5, pady=5, bg="red",
+        self.back_button = Button(self.prog2, text="RETURN", justify=tk.CENTER, height=5, pady=5, bg=button_color,
+                                  fg=button_text_color,
                                   font=("Verdana", 20, 'bold'))
         self.back_button.bind('<Button-1>', self.backToList)
         self.back_button.pack()
 
-        self.prog2.configure(bg="khaki3")
-        self.prog3.configure(bg="khaki3")
+        self.prog2.configure(bg=bg_color)
+        self.prog3.configure(bg=bg_color)
         self.prog1.configure(width=100)
         # Bind the Entry to the getSmry event through pressing Return
 

@@ -163,7 +163,7 @@ def generateKeywords(link):
         # sentences = re.sub(r'\.([A-Z0-9])', r'. \1', sentences)
         sentences = re.sub(r'\."([A-Z0-9])', r'". \1', sentences)
         sentences = re.sub(r'(Mr\.|Ms\.|Dr\.|Mrs\.|[A-Z]\.) ', r'\1', sentences)
-        sentences = re.sub(r'([0-9])\.([0-9])', r'\1\2', sentences)
+        sentences = re.sub(r' ([0-9]+)\.([0-9]+) ', r'\1\2', sentences)
         # formatted_article_text = re.sub('[^a-zA-Z]', ' ', sentences)
         # print(sentences)
         keywords = rake.generate_from_article(sentences, 999)
@@ -213,7 +213,6 @@ def generateSummary(link, typ):
         sentences = re.sub(r'(Mr\.|Ms\.|Dr\.|Mrs\.|[A-Z]\.) ', r'\1', sentences)
         sentences = re.sub(r'([0-9])\.([0-9])', r'\1\2', sentences)
         # formatted_article_text = re.sub('[^a-zA-Z]', ' ', sentences)
-        print(sentences)
         keywords = rake.generate_from_article(sentences, 10)
 
         sentence_list = []
@@ -225,6 +224,7 @@ def generateSummary(link, typ):
             sentence_list = vi_token.tokenize(sentences)
 
         new_sent_list = []
+        # print(sentence_list)
         paragraph_bound = [-1]
         # Some sentences might end with a quote, which NLTK does not detect. Added a proper period after quotes for NLTK
         for sents in sentence_list:
@@ -236,11 +236,10 @@ def generateSummary(link, typ):
             elif lang_name == 'vi':
                 temp = vi_token.tokenize(sents)
             for new_sent in temp:
-                if new_sent != '<NNN>.':
-                    new_sent_list.append(new_sent)
+                new_sent_list.append(new_sent)
 
         for val, sents in enumerate(new_sent_list):
-            # print(sents)
+            print(repr(sents))
             if '<NNN>' in sents:
                 if sents == '<NNN>.':
                     paragraph_bound.append(val - 1)
@@ -248,6 +247,14 @@ def generateSummary(link, typ):
                     paragraph_bound.append(val)
                 sents = sents.replace('<NNN>.', '')
             new_sent_list[val] = sents
+
+        print(new_sent_list)
+        counter = 0
+        for i in range(len(new_sent_list)):
+            if len(new_sent_list[counter]) == 0:
+                new_sent_list.remove(new_sent_list[counter])
+                counter = counter - 1
+            counter = counter + 1
 
             if len(sents) > 3 and sents[-3:] in ['.\".', '?\".', '!\".']:
                 new_sent_list[val] = sents[:-2]

@@ -25,7 +25,7 @@ if sys.platform == "win32":
 
 setup(
     name="QNews",
-    version="0.1.1",
-    description="Summarize the News for you",
+    version="0.1.2",
+    description="QNEWS",
     options={"build_exe": build_exe_options},
     executables=[Executable("gui_30.py", base=base, icon='app.ico')])

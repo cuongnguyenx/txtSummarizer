@@ -126,10 +126,14 @@ class keywordFrame:
     # self, master, links, titles, sred_dict, keyword_occurrence, currSearch
     def __init__(self, *args):
         self.master = args[0]
+        bg_color = 'gray82'
+        button_color_gen = 'medium blue'
+        button_color_back = 'gray27'
+        button_text_color = 'ghost white'
 
-        self.frame_top = Frame(self.master, bg='khaki3')
-        self.frame_middle = Frame(self.master, bg='khaki3')
-        self.frame_bottom = Frame(self.master, bg='khaki3')
+        self.frame_top = Frame(self.master, bg=bg_color)
+        self.frame_middle = Frame(self.master, bg=bg_color)
+        self.frame_bottom = Frame(self.master, bg=bg_color)
 
         self.links = []
         self.titles = []
@@ -147,7 +151,7 @@ class keywordFrame:
         self.keywords = dict()
 
         self.searchVar = StringVar()
-        self.search_label = Label(self.frame_top, text="          Search:         ", bg="khaki3",
+        self.search_label = Label(self.frame_top, text="          Search:         ", bg=bg_color,
                                   font=("Verdana", 14, 'bold'),
                                   relief=tk.SUNKEN)
         self.search_box = Entry(self.frame_top, relief=tk.SUNKEN, bg='turquoise', width=200,
@@ -161,12 +165,14 @@ class keywordFrame:
         # self.loading_bar = ttk.Progressbar(self.frame_middle, orient='horizontal', mode='indeterminate', length=1370)
         # self.loading_bar.start(50)
         self.loading_label = Label(self.frame_middle, text='Press GENERATE To Get Trending Keywords\n|\n|\n|\nv',
-                                   bg="khaki3"
+                                   bg=bg_color
                                    , font=("Verdana", 32, 'bold'), justify=tk.CENTER)
         self.generate_button = Button(self.frame_bottom, text='GENERATE', justify=tk.CENTER
-                                      , bg="red", font=("Verdana", 28, 'bold'), command=self.populate_keyword_list_gui)
+                                      , bg=button_color_gen, font=("Verdana", 28, 'bold'), fg=button_text_color,
+                                      command=self.populate_keyword_list_gui)
 
-        self.return_to_keyword_button = Button(self.frame_bottom, text='RETURN', justify=tk.CENTER, bg='red',
+        self.return_to_keyword_button = Button(self.frame_bottom, text='\u2190', bg=button_color_back,
+                                               fg=button_text_color,
                                                font=('Verdana', 28, 'bold'), command=self.back_to_list)
 
         # self.loading_bar.grid(row=0, sticky='news', pady=(300, 0), padx=(5, 5))
@@ -182,7 +188,7 @@ class keywordFrame:
         else:
             self.search_box.configure(state=tk.NORMAL)
             self.keyword_list_display.grid(row=0, sticky='news')
-            self.return_to_keyword_button.pack(expand=True, fill=tk.BOTH)
+            self.return_to_keyword_button.pack(side=tk.LEFT)
             self.gen_prev_state_with_key()
 
         self.frame_top.grid(row=0, sticky=N + E + W + S, pady=(0, 5), padx=(0, 0))
@@ -388,7 +394,7 @@ class keywordFrame:
             self.keyword_list_display.insert(val + 1, self.titles[index] + " " + news_target_title)
 
         self.generate_button.pack_forget()
-        self.return_to_keyword_button.pack(fill=tk.BOTH, expand=True)
+        self.return_to_keyword_button.pack(side=tk.LEFT)
         self.keyword_list_display.bind('<<ListboxSelect>>', self.on_link_selection)
 
     def gen_prev_state_with_key(self):
@@ -403,7 +409,7 @@ class keywordFrame:
             self.keyword_list_display.insert(val + 1, self.titles[index] + " " + news_target_title)
 
         self.generate_button.pack_forget()
-        self.return_to_keyword_button.pack(fill=tk.BOTH, expand=True)
+        self.return_to_keyword_button.pack(side=tk.LEFT)
         self.keyword_list_display.bind('<<ListboxSelect>>', self.on_link_selection)
 
     def on_link_selection(self, event):
@@ -422,10 +428,13 @@ class summaryFrame_Key:
     def __init__(self, *args):
         self.currMaster = args[0]
         print(self.currMaster)
+        bg_color = 'gray82'
+        button_color = 'gray27'
+        button_text_color = 'ghost white'
 
-        self.prog1 = Frame(self.currMaster, bg="khaki3")  # Frame for Entry, Textbox and their labels
-        self.prog2 = Frame(self.currMaster, bg='khaki3')  # Frame for RESET Button
-        self.prog3 = Frame(self.currMaster, bg='khaki3')  # Frame for length slider
+        self.prog1 = Frame(self.currMaster, bg=bg_color)  # Frame for Entry, Textbox and their labels
+        self.prog2 = Frame(self.currMaster, bg=bg_color)  # Frame for RESET Button
+        self.prog3 = Frame(self.currMaster, bg=bg_color)  # Frame for length slider
         self.url = ''
         self.uptitle = ''
 
@@ -441,7 +450,7 @@ class summaryFrame_Key:
             self.uptitle = self.currtitles[self.index_sel]
 
         # Labels "Enter URL" and "Output Summary:
-        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg="khaki3", font=("Verdana", 12, 'bold'),
+        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg=bg_color, font=("Verdana", 12, 'bold'),
                               relief=tk.SUNKEN)
 
         # Put the labels into the grid, lbl_link at (0,0) and lbl_smry at (1,0)
@@ -452,13 +461,13 @@ class summaryFrame_Key:
                                            relief=tk.SUNKEN, bg='turquoise')
         self.smry_text.grid(row=1, column=1, sticky='news', pady=(0, 5))
 
-        self.back_button = Button(self.prog2, text="RETURN", justify=tk.CENTER, height=5, pady=5, bg="red",
-                                  font=("Verdana", 20, 'bold'))
+        self.back_button = Button(self.prog2, text="\u2190", justify=tk.CENTER, height=5, pady=5, bg=button_color,
+                                  font=("Verdana", 20, 'bold'), fg=button_text_color)
         self.back_button.bind('<Button-1>', self.backToList)
-        self.back_button.pack()
+        self.back_button.pack(side=tk.LEFT)
 
-        self.prog2.configure(bg="khaki3")
-        self.prog3.configure(bg="khaki3")
+        self.prog2.configure(bg=bg_color)
+        self.prog3.configure(bg=bg_color)
         self.prog1.configure(width=100)
         # Bind the Entry to the getSmry event through pressing Return
 

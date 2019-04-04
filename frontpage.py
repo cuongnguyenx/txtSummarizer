@@ -14,7 +14,7 @@ import tkinter.scrolledtext as tkst
 
 class FrontPageGrid:
     def __init__(self, master):
-        bg_color = 'khaki3'
+        bg_color = 'gray82'
 
         self.currMaster = master  # the master should be the root
         self.main = Frame(master, bg=bg_color)  # Main Frame, contains Image (2x3) Grid
@@ -159,8 +159,8 @@ class FrontPageGrid:
 
 class FrontPageList:
     def __init__(self, master, title, currlinks, currtitles, currcategories):
-        self.bg_color = 'khaki3'
-        self.button_color = 'red'
+        self.bg_color = 'gray82'
+        self.button_color = 'gray27'
         self.subcombine = Frame(master, bg=self.bg_color, width=1370, height=820)
         self.subup = Frame(self.subcombine, bg=self.bg_color, width=1370, height=200)
         self.subdown = Frame(self.subcombine, bg=self.bg_color, width=1370, height=620)
@@ -205,9 +205,10 @@ class FrontPageList:
         for val, title in enumerate(currtitles):
             self.listhead.insert(val + 1, title)
 
-        self.backmain = Button(self.subdown, text='Return', pady=5, font=('Verdana', 20, 'bold'), bg=self.button_color)
+        self.backmain = Button(self.subdown, text='\u2190', pady=5, font=('Verdana', 20, 'bold'), bg=self.button_color,
+                               justify=tk.LEFT)
         self.backmain.bind('<ButtonRelease-1>', self.retMain)
-        self.backmain.pack()
+        self.backmain.pack(side=tk.LEFT)
 
         self.subup.pack(fill=BOTH)
         self.subdown.pack(fill=BOTH)
@@ -249,8 +250,8 @@ class FrontPageList:
 class SummaryFrame_Front:
     def __init__(self, url, master, title, currlinks, currtitles, currcategories):
         self.currMaster = master
-        self.bg_color = 'khaki3'
-        self.button_color = 'red'
+        self.bg_color = 'gray82'
+        self.button_color = 'gray27'
 
         self.prog1 = Frame(master, bg=self.bg_color)  # Frame for Entry, Textbox and their labels
         self.prog2 = Frame(master, bg=self.bg_color)  # Frame for RESET Button
@@ -273,10 +274,10 @@ class SummaryFrame_Front:
                                            relief=tk.SUNKEN, bg='turquoise')
         self.smry_text.grid(row=1, column=1, sticky='news', pady=(0, 5))
 
-        self.back_button = Button(self.prog2, text="RETURN", justify=tk.CENTER, height=5, pady=5, bg=self.button_color,
-                                  font=("Verdana", 20, 'bold'))
+        self.back_button = Button(self.prog2, text="\u2190", height=5, pady=5, bg=self.button_color,
+                                  font=("Verdana", 20, 'bold'), justify=tk.LEFT)
         self.back_button.bind('<Button-1>', self.backToList)
-        self.back_button.pack()
+        self.back_button.pack(side=tk.LEFT)
 
         self.prog2.configure(bg=self.bg_color)
         self.prog3.configure(bg=self.bg_color)
