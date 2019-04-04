@@ -14,7 +14,7 @@ import tkinter.scrolledtext as tkst
 
 class FrontPageGrid:
     def __init__(self, master):
-        bg_color = 'gray82'
+        bg_color = '#c6c8c9'
 
         self.currMaster = master  # the master should be the root
         self.main = Frame(master, bg=bg_color)  # Main Frame, contains Image (2x3) Grid
@@ -159,7 +159,7 @@ class FrontPageGrid:
 
 class FrontPageList:
     def __init__(self, master, title, currlinks, currtitles, currcategories):
-        self.bg_color = 'gray82'
+        self.bg_color = '#c6c8c9'
         self.button_color = 'gray27'
         self.subcombine = Frame(master, bg=self.bg_color, width=1370, height=820)
         self.subup = Frame(self.subcombine, bg=self.bg_color, width=1370, height=200)
@@ -250,7 +250,7 @@ class FrontPageList:
 class SummaryFrame_Front:
     def __init__(self, url, master, title, currlinks, currtitles, currcategories):
         self.currMaster = master
-        self.bg_color = 'gray82'
+        self.bg_color = '#c6c8c9'
         self.button_color = 'gray27'
 
         self.prog1 = Frame(master, bg=self.bg_color)  # Frame for Entry, Textbox and their labels
