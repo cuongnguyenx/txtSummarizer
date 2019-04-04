@@ -25,9 +25,9 @@ class FrontPageGrid:
         self.title_lbl.pack()
 
         # Photos to populate buttons
-        self.photo_ny = ImageTk.PhotoImage(Image.open('nytimes_2.jpg'))
-        self.photo_wapo = ImageTk.PhotoImage(Image.open('wapo_2.jpg'))
-        self.photo_bbc = ImageTk.PhotoImage(Image.open('bbc_2.jpg'))
+        self.photo_ny = ImageTk.PhotoImage(Image.open('nytimes_2.png'))
+        self.photo_wapo = ImageTk.PhotoImage(Image.open('wapo_2.png'))
+        self.photo_bbc = ImageTk.PhotoImage(Image.open('bbc_2.png'))
         self.photo_reuters = ImageTk.PhotoImage(Image.open('reuters.png'))
         self.photo_guardian = ImageTk.PhotoImage(Image.open('guardian.png'))
         # self.photo_wsj = ImageTk.PhotoImage(Image.open('./imgs/wsj_2.jpg'))
