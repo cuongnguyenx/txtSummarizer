@@ -1,3 +1,4 @@
-import nltk
+from tkinter import Tk, font
 
-nltk.download()
+root = Tk()
+print(font.families())

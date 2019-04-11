@@ -37,6 +37,7 @@ def parseText(link):
 
     article = scraped_data.read()
     parsed_article = bs.BeautifulSoup(article, 'lxml')
+    # print(parsed_article)
 
     paragraphs = parsed_article.find_all('p')
 
@@ -211,7 +212,7 @@ def generateSummary(link, typ):
         # sentences = re.sub(r'\.([A-Z0-9])', r'. \1', sentences)
         sentences = re.sub(r'\."([A-Z0-9])', r'". \1', sentences)
         sentences = re.sub(r'(Mr\.|Ms\.|Dr\.|Mrs\.|[A-Z]\.) ', r'\1', sentences)
-        sentences = re.sub(r'([0-9])\.([0-9])', r'\1\2', sentences)
+        sentences = re.sub(r' [0-9]+([0-9]+)\.([0-9]+)[0-9]+ ', r'\1\2', sentences)
         # formatted_article_text = re.sub('[^a-zA-Z]', ' ', sentences)
         keywords = rake.generate_from_article(sentences, 10)
 
@@ -239,7 +240,7 @@ def generateSummary(link, typ):
                 new_sent_list.append(new_sent)
 
         for val, sents in enumerate(new_sent_list):
-            print(repr(sents))
+            # print(repr(sents))
             if '<NNN>' in sents:
                 if sents == '<NNN>.':
                     paragraph_bound.append(val - 1)
@@ -248,7 +249,7 @@ def generateSummary(link, typ):
                 sents = sents.replace('<NNN>.', '')
             new_sent_list[val] = sents
 
-        print(new_sent_list)
+        # print(new_sent_list)
         counter = 0
         for i in range(len(new_sent_list)):
             if len(new_sent_list[counter]) == 0:

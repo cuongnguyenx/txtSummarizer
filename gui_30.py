@@ -6,6 +6,7 @@ from tkinter import *
 from tkinter import ttk
 from keyword_interface import keywordFrame
 import os
+from tkinter.font import Font
 
 '''
 for filename in os.listdir("build"):
@@ -13,16 +14,21 @@ for filename in os.listdir("build"):
                   "build\\" + filename + "\lib\multiprocessing\pool.pyc")
 '''
 
+for file in os.listdir('./'):
+    if 'mp3' in file:
+        os.remove(file)
+
 root = Tk()
 tabs = ttk.Notebook(root, height=800, width=1347)
 bg_color = 'gray67'
+
 
 progover = Frame(root, bg=bg_color)
 frontover = Frame(root, bg=bg_color)
 keyover = Frame(root, bg=bg_color)
 
 sm = SummaryFrame(progover)
-fm = FrontPageGrid(frontover)
+fm = FrontPageGrid(frontover, 1)
 km = keywordFrame(keyover)
 
 tabs.add(frontover, text="Read the Frontpages")
@@ -31,9 +37,9 @@ tabs.add(progover, text="Summary From Link")
 
 tabs.pack(side="top", fill="both")
 
-root.geometry("1380x840")
+# root.geometry("1380x840")
 root.title('QNews')
-root.resizable(0, 0)
+# root.resizable(0, 0)
 root.mainloop()
 
 # https://docs.python.org/3/library/tkinter.ttk.html#combobox

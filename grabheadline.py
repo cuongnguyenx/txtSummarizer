@@ -276,4 +276,92 @@ def grabfront(link):
             links.append(sublink)
             titles.append(title)
 
+    if 'newsweek' in link:
+        pattern = re.compile(r'Opinion')
+        headlines_1 = parsed_article.find_all('article', {'class': [False, 'col-sm-6 col-md-3']})
+        headlines_2 = parsed_article.find('div', {'class': 'feature2 subfeature2'}).find_all('li', {'class': 'flex-xs'})
+        headlines_3 = parsed_article.find_all('article', {'class': 'clearfix'})
+
+        for sections in headlines_1[:-1]:
+            category = sections.find('div', {'class': 'category'}).text
+            h3_tag = sections.find('h3')
+            sublink = h3_tag.find('a')['href']
+            title = h3_tag.find('a').text
+
+            links.append(link + sublink)
+            titles.append(title)
+            categories.append(category)
+
+        for sections in headlines_2[:-1]:
+            div_tag = sections.find('div', {'class': 'info'})
+            sublink = div_tag.find('a')['href']
+            title = div_tag.find('a').text
+
+            links.append(link + sublink)
+            titles.append(title)
+            categories.append('Opinion')
+
+        for sections in headlines_3[:-1]:
+            h4_tag = sections.find('h4')
+            sublink = h4_tag.find('a')['href']
+            title = h4_tag.find('a').text
+
+            links.append(link + sublink)
+            titles.append(title)
+            categories.append('More Stories')
+
+    if 'politico' in link:
+        headlines = parsed_article.find_all('h1', {'class': 'headline '})
+        for xx in headlines[:-1]:
+            sublink = xx.find('a')['href']
+            title = xx.find('a').text
+
+            links.append(sublink)
+            titles.append(title)
+
+    if 'bloomberg' in link:
+        headlines_1 = parsed_article.find('section', {'class': 'single-story-module__info'})
+        print(headlines_1)
+        category_1 = headlines_1.find('a', {'class': 'single-story-module__eyebrow-link'})
+
+        headlines_2 = parsed_article.find_all('article', {'class': "story-package-module__story"})
+
+        for xx in headlines_1.find_all('a', {
+            'class': ['single-story-module__headline-link', 'single-story-module__related-story-link']})[:-1]:
+            sublink = xx['href']
+            title = xx.text
+
+            links.append(link + sublink)
+            titles.append(title)
+            categories.append(category_1)
+
+        for xx in headlines_2[:-1]:
+            if xx.find('section', {'class': 'story-package-module__story__eyebrow'}):
+                category_2 = xx.find('section', {'class': 'story-package-module__story__eyebrow'}).text
+            else:
+                category_2 = 'Opinion'
+
+            if xx.find('a', {'class': 'story-package-module__story__headline-link'}):
+                atag = xx.find('a', {'class': 'story-package-module__story__headline-link'})
+                sublink = atag['href']
+                title = atag.text
+
+                links.append(link + sublink)
+                titles.append(title)
+                categories.append(category_2)
+            else:
+                continue
+    if 'verge' in link:
+        headlines = parsed_article.find_all('h2', {'class': 'c-entry-box--compact__title'})
+        for xx in headlines[:-1]:
+            atag = xx.find('a')
+            if atag['data-analytics-link'] != 'article':
+                continue
+            sublink = atag['href']
+            title = atag.text
+
+            links.append(sublink)
+            titles.append(title)
+
+
     return links, titles, categories

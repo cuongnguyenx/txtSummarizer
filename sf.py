@@ -6,23 +6,28 @@ import time
 import numpy as np
 import tkinter.scrolledtext as tkst
 import tkinter.messagebox
-
+import config
+from PIL import Image, ImageTk
+import playsound
+import gtts
+import string
+import threading
+import random
 
 class SummaryFrame:
     # TODO Implement multiprocessing to speed up runtime
     # TODO Prettify GUI
     def __init__(self, master):
-        bg_color = 'gray82'
-        button_color = 'gray27'
-        button_text_color = 'ghost white'
-        self.prog1 = Frame(master, bg=bg_color)  # Frame for Entry, Textbox and their labels
-        self.prog2 = Frame(master, bg=bg_color)  # Frame for RESET Button
-        self.prog3 = Frame(master, bg=bg_color)  # Frame for length slider
+        self.prog1 = Frame(master, bg=config.bg_color)  # Frame for Entry, Textbox and their labels
+        self.prog2 = Frame(master, bg=config.bg_color)  # Frame for RESET Button
+        self.prog3 = Frame(master, bg=config.bg_color)  # Frame for length slider
+        self.speaker_icon = ImageTk.PhotoImage(Image.open('speaker_icon.png'))
+        self.prt = ''
 
         # Labels "Enter URL" and "Output Summary:
-        self.lbl_link = Label(self.prog1, text="Enter URL: ", bg=bg_color, font=("Verdana", 12, 'bold'),
+        self.lbl_link = Label(self.prog1, text="Enter URL: ", bg=config.bg_color, font=("Verdana", 12, 'bold'),
                               relief=tk.SUNKEN)
-        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg=bg_color, font=("Verdana", 12, 'bold'),
+        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg=config.bg_color, font=("Verdana", 12, 'bold'),
                               relief=tk.SUNKEN)
 
         # Put the labels into the grid, lbl_link at (0,0) and lbl_smry at (1,0)
@@ -30,32 +35,39 @@ class SummaryFrame:
         self.lbl_smry.grid(row=1, sticky=N + E + W + S, pady=(0, 5), padx=(5, 0))
 
         # Link Entry and Result Textbox
-        self.entry_link = Entry(self.prog1, width=150, relief=tk.SUNKEN, bg='turquoise')
+        self.entry_link = Entry(self.prog1, width=150, relief=tk.SUNKEN, bg=config.entry_color)
         self.smry_text = tkst.ScrolledText(self.prog1, state=tk.DISABLED, wrap=tk.WORD, width=110, height=45,
-                                           relief=tk.SUNKEN, bg='turquoise')
+                                           relief=tk.SUNKEN, bg=config.entry_color)
 
         self.entry_link.grid(row=0, column=1, sticky="news", pady=(3, 0))
         self.smry_text.grid(row=1, column=1, sticky='news', pady=(0, 5))
 
         # Reset Button
         self.reset_button = Button(self.prog2, text="RESET", justify=tk.CENTER, height=5, pady=5,
-                                   command=self.reset_everything, bg=button_color, fg=button_text_color,
+                                   command=self.reset_everything, bg=config.button_color, fg=config.text_color,
                                    font=("Verdana", 20, 'bold'))
+
+        self.play_sound_button = Button(self.prog2, bg=config.button_color, font=("Verdana", 20, 'bold'), height=32,
+                                        image=self.speaker_icon)
+        self.play_sound_button.bind('<Button-1>', self.on_sound_button_click)
+        self.play_sound_button.pack(side=tk.RIGHT)
         self.reset_button.pack()
-        self.prog2.configure(bg=bg_color)
-        self.prog3.configure(bg=bg_color)
-        self.prog3.configure(bg=bg_color)
+
+        self.prog2.configure(bg=config.bg_color)
+        self.prog3.configure(bg=config.bg_color)
+        self.prog3.configure(bg=config.bg_color)
         self.prog1.configure(width=100)
         # Bind the Entry to the getSmry event through pressing Return
         self.entry_link.bind("<Return>", self.getSmryCustom)
 
-        self.lbl_temp = Label(self.prog3, text="ARTICLE SUMMARY LENGTH", bg="RoyalBlue3", font=("Verdana", 12, 'bold'),
-                              fg="gold2", relief=tk.GROOVE)
+        self.lbl_temp = Label(self.prog3, text="ARTICLE SUMMARY LENGTH", bg=config.slider_label_bg,
+                              font=config.slider_label_font,
+                              fg=config.slider_label_fg, relief=tk.GROOVE)
         self.lbl_temp.grid(row=0, pady=(4, 4), padx=(4, 4))
 
         # Article length slider
         self.slider = tk.Scale(self.prog3, from_=0, to=0, length=727, tickinterval=10, orient="vertical", showvalue=0,
-                               relief=tk.SUNKEN, bg="brown")
+                               relief=tk.SUNKEN, bg=config.slider_color)
         self.slider.bind('<ButtonRelease-1>', self.sliderUpdate)
 
         self.slider.grid(row=1, pady=(5, 0))
@@ -103,9 +115,6 @@ class SummaryFrame:
         '''
 
     def getSmryCustom(self, event):
-        titlefont = Font(family="Times New Roman", size=22, weight="bold", underline=1)
-        keyfont = Font(family="Calibri", size=18, slant="italic")
-        contentfont = Font(family="Yu Gothic Medium", size=14)
         # DEFAULT_SUMMARY = 5
 
         # Disable reset button during processing, will enable later
@@ -134,14 +143,14 @@ class SummaryFrame:
             self.reset_button.configure(state=tk.NORMAL)
             self.entry_link.configure(state=tk.NORMAL)
 
-        print(self.sentences)
+        # print(self.sentences)
         if self.status == 0:
             leng = self.scores.__len__()
             DEFAULT_SUMMARY = int(round((leng / 5), 0))
             # DEFAULT_SUMMARY = leng
 
             key_string = 'KEYWORDS:'
-            print(self.keywords)
+            # print(self.keywords)
             for key in self.keywords:
                 key_string = key_string + key + ', '
             key_string = key_string[:-2]
@@ -151,7 +160,7 @@ class SummaryFrame:
 
             final_list = np.sort(self.scores[:DEFAULT_SUMMARY + 1])
             # summary = [self.sentences[i] for i in final_list]  # Getting the summary based on summary length
-            prt = ''
+            self.prt = ''
             tmp = ''
             bl = -1
             br = -1
@@ -167,7 +176,7 @@ class SummaryFrame:
                                 # print(self.sentences[s])
                                 tmp += self.sentences[s]
                             else:
-                                prt += tmp + "\n\n"
+                                self.prt += tmp + "\n\n"
                                 tmp = "" + self.sentences[s]
                             bl = self.bound[val2 - 1]
                             br = self.bound[val2]
@@ -187,15 +196,15 @@ class SummaryFrame:
             # Inserting summary into the Textfield
             self.smry_text.insert(tk.END, self.title + "\n\n")
             self.smry_text.tag_add("title", "1.0", "1.end")
-            self.smry_text.tag_configure("title", font=titlefont, foreground="DarkOrange3")
+            self.smry_text.tag_configure("title", font=config.titlefont_sum, foreground=config.title_text_color)
 
             self.smry_text.insert(tk.END, key_string + "\n")
             self.smry_text.tag_add("key", "3.0", "3.end")
-            self.smry_text.tag_configure("key", font=keyfont, foreground="gray32")
+            self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground=config.title_key_color)
 
-            self.smry_text.insert(tk.END, prt)
+            self.smry_text.insert(tk.END, self.prt)
             self.smry_text.tag_add("content", "4.0", tk.END)
-            self.smry_text.tag_configure("content", font=contentfont)
+            self.smry_text.tag_configure("content", font=config.contentfont_sum)
 
         elif self.status == -69:
             tk.messagebox.showerror("Error", "Invalid Link")
@@ -207,7 +216,6 @@ class SummaryFrame:
             self.reset_button.configure(state=tk.NORMAL)
             self.entry_link.configure(state=tk.NORMAL)
             self.slider.configure(state=tk.NORMAL)
-
 
         self.entry_link.delete('0', tk.END)
         self.smry_text.configure(state=tk.DISABLED)
@@ -229,10 +237,6 @@ class SummaryFrame:
         self.slider.grid_remove()
 
     def sliderUpdate(self, event):
-        titlefont = Font(family="Times New Roman", size=22, weight="bold", underline=1)
-        keyfont = Font(family="Calibri", size=18, slant="italic")
-        contentfont = Font(family="Yu Gothic Medium", size=14)
-
         # Disable reset button during processing, will enable later
         self.reset_button.configure(state=tk.DISABLED)
 
@@ -283,15 +287,29 @@ class SummaryFrame:
         # Inserting summary into the Textfield
         self.smry_text.insert(tk.END, self.title + "\n\n")
         self.smry_text.tag_add("title", "1.0", "1.end")
-        self.smry_text.tag_configure("title", font=titlefont, foreground="DarkOrange3")
+        self.smry_text.tag_configure("title", font=config.titlefont_sum, foreground=config.title_text_color)
 
         self.smry_text.insert(tk.END, key_string + "\n")
         self.smry_text.tag_add("key", "3.0", "3.end")
-        self.smry_text.tag_configure("key", font=keyfont, foreground="gray32")
+        self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground=config.title_key_color)
 
         self.smry_text.insert(tk.END, prt)
         self.smry_text.tag_add("content", "4.0", tk.END)
-        self.smry_text.tag_configure("content", font=contentfont)
+        self.smry_text.tag_configure("content", font=config.contentfont_sum)
 
         self.entry_link.delete('0', tk.END)
         self.smry_text.configure(state=tk.DISABLED)
+
+    def on_sound_button_click(self, event):
+        print('Preparing To Play Sound...')
+        thread1 = threading.Thread(target=self.playSSS, args=[])
+        thread1.start()
+
+    def playSSS(self):
+        tts = gtts.gTTS(
+            text=self.prt,
+            lang='en')
+        allchar = string.ascii_letters + string.digits
+        filename = "".join(random.choice(allchar) for x in range(12)) + ".mp3"
+        tts.save(filename)
+        playsound.playsound(filename)

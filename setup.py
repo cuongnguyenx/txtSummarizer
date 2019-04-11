@@ -8,9 +8,9 @@ build_exe_options = dict(packages=["tkinter", "numpy", "bs4", "nltk", "PIL", "mu
                          include_files=["lxrTest.py", "frontpage.py", "grabheadline.py",
                                         "idf_en.txt", "keyword_interface.py", "keyword_search.py", "keywords_gui.py",
                                         "lexy.py", "rake.py", "vi.pickle",
-                                        "sf.py", "sfk.py", "stopwords_en.txt", "./imgs/bbc_2.png",
-                                        "./imgs/nytimes_2.png", './imgs/wapo_2.png', './imgs/reuters.png',
-                                        './imgs/guardian.png', './imgs/apnews.png', 'tcl86t.dll', 'tk86t.dll',
+                                        "sf.py", "sfk.py", "stopwords_en.txt", "bbc_2.png",
+                                        "nytimes_2.png", 'wapo_2.png', 'reuters.png',
+                                        'guardian.png', 'apnews.png', 'tcl86t.dll', 'tk86t.dll',
                                         'nltk_data/'],
                          excludes=['matplotlib', 'gensim', 'keras', 'sklearn', 'scipy', 'underthesea'])
 
