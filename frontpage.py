@@ -19,20 +19,41 @@ import string
 import random
 
 class FrontPageGrid:
-    def __init__(self, master, currpage):
+    def __init__(self, *args):
+        self.currMaster = args[0]  # the master should be the root
 
-        self.currMaster = master  # the master should be the root
-        self.main1 = Frame(master, bg=config.bg_color)  # Main Frame, contains Image (2x3) Grid
-        self.main2 = Frame(master, bg=config.bg_color)
-        self.title = Frame(master, bg=config.bg_color)  # Contains the title "WHAT"S ON THE FRONT PAGE"\
-        self.next = Frame(master, bg=config.bg_color)
-        self.prev = Frame(master, bg=config.bg_color)
-        self.currPage = currpage
+        self.main1 = Frame(self.currMaster, bg=config.bg_color)  # Main Frame, contains Image (2x3) Grid
+        self.main2 = Frame(self.currMaster, bg=config.bg_color)
+        self.title = Frame(self.currMaster, bg=config.bg_color)  # Contains the title "WHAT"S ON THE FRONT PAGE"\
+        self.next = Frame(self.currMaster, bg=config.bg_color)
+        self.prev = Frame(self.currMaster, bg=config.bg_color)
+        self.bg_image = ImageTk.PhotoImage(Image.open('texture.jpg'))
 
+        self.bg1 = Label(self.main1, image=self.bg_image)
+        self.bg1.image = self.bg_image
+        self.bg1.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        self.title_lbl = Label(self.title, justify=tk.CENTER, font=("Yu Gothic Medium", 30, 'bold'),
+        self.bg2 = Label(self.main2, image=self.bg_image)
+        self.bg2.image = self.bg_image
+        self.bg2.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        self.bg3 = Label(self.title, image=self.bg_image)
+        self.bg3.image = self.bg_image
+        self.bg3.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        self.bg4 = Label(self.next, image=self.bg_image)
+        self.bg4.image = self.bg_image
+        self.bg4.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        self.bg5 = Label(self.prev, image=self.bg_image)
+        self.bg5.image = self.bg_image
+        self.bg5.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        self.currPage = args[1]
+
+        self.title_lbl = Label(self.title, justify=tk.CENTER, font=config.center_label_font,
                                text="WHAT'S ON THE FRONT PAGE ?", bg=config.bg_color)
-        self.title_lbl.pack()
+        self.title_lbl.pack(pady=5)
 
         # Photos to populate buttons
         self.photo_ny = ImageTk.PhotoImage(Image.open('nytimes_2.png'))
@@ -108,11 +129,11 @@ class FrontPageGrid:
         self.prev_button.bind('<ButtonRelease-1>', self.prevPage)
         self.prev_button.grid(row=0, pady=(400, 0), padx=(0, 5))
 
-        if currpage == 1:
+        if self.currPage == 1:
             self.next.pack(side="right", fill=BOTH)
             self.title.pack(side="top", fill=BOTH)
             self.main1.pack(side="bottom", fill=BOTH)
-        elif currpage == 2:
+        elif self.currPage == 2:
             self.prev.pack(side="left", fill=BOTH)
             self.title.pack(side="top", fill=BOTH)
             self.main2.pack(side="bottom", fill=BOTH)
@@ -295,11 +316,20 @@ class FrontPageGrid:
 
 class FrontPageList:
     def __init__(self, master, title, currlinks, currtitles, currcategories, currpage):
-        self.bg_color = '#c6c8c9'
-        self.button_color = 'gray27'
         self.subcombine = Frame(master, bg=config.bg_color, width=1370, height=820)
         self.subup = Frame(self.subcombine, bg=config.bg_color, width=1370, height=200)
         self.subdown = Frame(self.subcombine, bg=config.bg_color, width=1370, height=620)
+
+        self.bg_image = ImageTk.PhotoImage(Image.open('texture.jpg'))
+
+        self.bg1 = Label(self.subup, image=self.bg_image)
+        self.bg1.image = self.bg_image
+        self.bg1.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        self.bg2 = Label(self.subdown, image=self.bg_image)
+        self.bg2.image = self.bg_image
+        self.bg2.place(relx=0, rely=0, relwidth=1, relheight=1)
+
         self.currMaster = master
 
         self.currtitles = currtitles
@@ -319,7 +349,7 @@ class FrontPageList:
             else:
                 self.categ_dict[categ] += 1
 
-        self.subtitle = Label(self.subup, text=self.uptitle, font=('Yu Gothic Medium', 26, 'bold'), padx=5, pady=5,
+        self.subtitle = Label(self.subup, text=self.uptitle, font=('Yu Gothic Semibold', 28, 'bold'), padx=5, pady=5,
                               bg=config.bg_color)
         self.subtitle.pack()
 
@@ -339,25 +369,16 @@ class FrontPageList:
         self.size_drop.pack()
         self.size_drop.bind("<<ComboboxSelected>>", self.changeCategory)
 
-        '''
-        self.listhead = Listbox(self.subdown, height=21, highlightcolor='blue', font=('Yu Mincho', 18),
-                                selectmode=tk.SINGLE)
-        self.listhead.bind('<<ListboxSelect>>', self.genSummary)
-        for val, title in enumerate(currtitles):
-            self.listhead.insert(val + 1, title)
-        self.listhead.pack(expand=1, fill=tk.BOTH)
-        '''
-
         self.currMaster.update()
 
         self.listhead = ScrolledMultiListbox(self.subdown, relief='groove', bd=2, height=650)
-        self.listhead.listbox.config(columns=('Title', 'Category'), selectmode=tk.SINGLE, font=('Yu Mincho', 14))
+        self.listhead.listbox.config(columns=('Title', 'Category'), selectmode=tk.SINGLE, font=config.multilistbox_font)
 
         ###################################################################
         ###### add a set of different colors for itembackground ###########
         ###################################################################
 
-        colors = ('white', '#ffdddd', 'white', '#ddeeff')
+        colors = ('white', '#ddffff', 'white', '#ddffff')
         self.listhead.listbox.column_configure(self.listhead.listbox.column(0), itembackground=colors)
         self.listhead.listbox.column_configure(self.listhead.listbox.column(1), itembackground=colors)
 
@@ -371,8 +392,8 @@ class FrontPageList:
         self.listhead.listbox.bind('<1>', self.onGeneralClick, add=1)
         self.listhead.pack(expand=1, fill=tk.BOTH)
 
-        self.backmain = Button(self.subdown, text='\u2190', pady=5, font=('Verdana', 20, 'bold'),
-                               bg=config.button_color,
+        self.backmain = Button(self.subdown, text='\u2190', pady=5, font=config.button_font,
+                               bg=config.button_color, fg=config.text_color,
                                justify=tk.LEFT)
         self.backmain.bind('<ButtonRelease-1>', self.retMain)
         self.backmain.pack(side=tk.LEFT)
@@ -426,6 +447,22 @@ class SummaryFrame_Front:
         self.prog1 = Frame(master, bg=config.bg_color)  # Frame for Entry, Textbox and their labels
         self.prog2 = Frame(master, bg=config.bg_color)  # Frame for RESET Button
         self.prog3 = Frame(master, bg=config.bg_color)  # Frame for length slider
+        self.thread1 = threading.Thread(target=self.playSSS, args=[])
+
+        self.bg_image = ImageTk.PhotoImage(Image.open('texture.jpg'))
+
+        self.bg1 = Label(self.prog1, image=self.bg_image)
+        self.bg1.image = self.bg_image
+        self.bg1.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        self.bg2 = Label(self.prog2, image=self.bg_image)
+        self.bg2.image = self.bg_image
+        self.bg2.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        self.bg3 = Label(self.prog3, image=self.bg_image)
+        self.bg3.image = self.bg_image
+        self.bg3.place(relx=0, rely=0, relwidth=1, relheight=1)
+
         self.url = url
         self.uptitle = title
         self.currlinks = currlinks
@@ -433,27 +470,29 @@ class SummaryFrame_Front:
         self.currcategories = currcategories
         self.currprt = ''
         self.currpage = currpage
+        self.stopSound = False
+
         self.speaker_icon = ImageTk.PhotoImage(Image.open('speaker_icon.png'))
 
         # Labels "Enter URL" and "Output Summary:
-        self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg=config.bg_color, font=("Verdana", 12, 'bold'),
-                              relief=tk.SUNKEN)
+        # self.lbl_smry = Label(self.prog1, text="Output Summary: ", bg=config.bg_color, font=("Verdana", 12, 'bold'),
+        # relief=tk.SUNKEN)
 
         # Put the labels into the grid, lbl_link at (0,0) and lbl_smry at (1,0)
-        self.lbl_smry.grid(row=1, sticky=N + E + W + S, pady=(0, 5), padx=(5, 0))
+        # self.lbl_smry.grid(row=1, sticky=N + E + W + S, pady=(0, 5), padx=(5, 0))
 
         # Link Entry and Result Textbox
-        self.smry_text = tkst.ScrolledText(self.prog1, state=tk.DISABLED, wrap=tk.WORD, width=110, height=46,
-                                           relief=tk.SUNKEN, bg=config.entry_color)
-        self.smry_text.grid(row=1, column=1, sticky='news', pady=(0, 5))
+        self.smry_text = tkst.ScrolledText(self.prog1, state=tk.DISABLED, wrap=tk.WORD, width=133, height=45,
+                                           relief=tk.FLAT, bg=config.entry_color, borderwidth=10)
+        self.smry_text.grid(row=0, column=0, sticky='news', pady=(0, 5))
 
         self.back_button = Button(self.prog2, text="\u2190", height=5, pady=5, bg=config.button_color,
-                                  font=("Verdana", 20, 'bold'), justify=tk.LEFT)
+                                  font=config.button_font, fg=config.text_color, justify=tk.LEFT)
         self.back_button.bind('<Button-1>', self.backToList)
         self.back_button.pack(side=tk.LEFT)
 
         self.play_sound_button = Button(self.prog2, image=self.speaker_icon, bg=config.button_color,
-                                        font=("Verdana", 20, 'bold'))
+                                        font=config.button_font)
         self.play_sound_button.bind('<Button-1>', self.on_sound_button_click)
         self.play_sound_button.pack(side=tk.RIGHT)
 
@@ -559,15 +598,16 @@ class SummaryFrame_Front:
             # Inserting summary into the Textfield
             self.smry_text.insert(tk.END, self.title + "\n\n")
             self.smry_text.tag_add("title", "1.0", "1.end")
-            self.smry_text.tag_configure("title", font=config.titlefont_sum, foreground="DarkOrange3")
+            self.smry_text.tag_configure("title", font=config.titlefont_sum, foreground=config.title_text_color)
 
             self.smry_text.insert(tk.END, key_string + "\n")
             self.smry_text.tag_add("key", "3.0", "3.end")
-            self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground="gray32")
+            self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground=config.title_key_color)
 
             self.smry_text.insert(tk.END, self.prt)
             self.smry_text.tag_add("content", "4.0", tk.END)
-            self.smry_text.tag_configure("content", font=config.contentfont_sum)
+            self.smry_text.tag_configure("content", font=config.contentfont_sum, lmargin2=20, lmargin1=20, rmargin=20
+                                         , spacing2=4)
 
         elif self.status == -69:
             tk.messagebox.showerror("Error", "Invalid Link")
@@ -578,8 +618,8 @@ class SummaryFrame_Front:
         self.back_button.configure(state=tk.NORMAL)
 
     def on_sound_button_click(self, event):
-        thread1 = threading.Thread(target=self.playSSS, args=[])
-        thread1.start()
+        self.thread1.start()
+        self.thread1.setDaemon(True)
 
     def playSSS(self):
         tts = gTTS(
@@ -594,6 +634,7 @@ class SummaryFrame_Front:
         self.prog1.pack_forget()
         self.prog2.pack_forget()
         self.prog3.pack_forget()
+        self.stopSound = True
         fpl = FrontPageList(self.currMaster, self.uptitle, self.currlinks, self.currtitles, self.currcategories,
                             self.currpage)
 
@@ -611,7 +652,7 @@ class SummaryFrame_Front:
 
         final_list = np.sort(self.scores[:currval + 1])
         # summary = [self.sentences[i] for i in final_list]  # Getting the summary based on summary length
-        prt = ''
+        self.prt = ''
         tmp = ''
         bl = -1
         br = -1
@@ -631,7 +672,7 @@ class SummaryFrame_Front:
                             # print(self.sentences[s])
                             tmp += self.sentences[s]
                         else:
-                            prt += tmp + "\n\n"
+                            self.prt += tmp + "\n\n"
                             tmp = "" + self.sentences[s]
                         bl = self.bound[val2 - 1]
                         br = self.bound[val2]
@@ -640,23 +681,18 @@ class SummaryFrame_Front:
         # Inserting summary into the Textfield
         self.smry_text.insert(tk.END, self.title + "\n\n")
         self.smry_text.tag_add("title", "1.0", "1.end")
-        self.smry_text.tag_configure("title", font=config.titlefont_sum, foreground="DarkOrange3")
+        self.smry_text.tag_configure("title", font=config.titlefont_sum, foreground=config.title_text_color)
 
         self.smry_text.insert(tk.END, key_string + "\n")
         self.smry_text.tag_add("key", "3.0", "3.end")
-        self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground="gray32")
+        self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground=config.title_key_color)
 
-        self.smry_text.insert(tk.END, prt)
+        self.smry_text.insert(tk.END, self.prt)
         self.smry_text.tag_add("content", "4.0", tk.END)
-        self.smry_text.tag_configure("content", font=config.contentfont_sum)
+        self.smry_text.tag_configure("content", font=config.contentfont_sum, lmargin2=20, lmargin1=20, rmargin=20,
+                                     spacing2=4)
 
         self.smry_text.configure(state=tk.DISABLED)
 
 
-'''
-root = Tk()
-fp = FrontPageGrid(root)F
-root.geometry("1370x820")
-root.mainloop()
-'''
 # https://stackoverflow.com/questions/4297949/image-on-a-button

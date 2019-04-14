@@ -26,20 +26,43 @@ def grabfront(link):
 
     # Ignore link with any of these following words
     verboten = ['crossword', 'podcast', 'graphics', 'photography', 'interactive', 'av', 'food', 'newsletter', 'live',
-                'videos', 'programmes', 'bbcthree', 'britbox', 'topgear', 'slideshow']
+                'videos', 'programmes', 'bbcthree', 'britbox', 'topgear', 'slideshow', 'tips']
     links = []  # Contains the links to pages on the FrontPageList, to be used for urllib
     titles = []  # Contains the titles to the corresponding links
     categories = []
 
     # A lot of the following are custom rules discovered by me, and they work as is currently
     if 'nytimes.com' in link:
+        # print(parsed_article)
         headlines = parsed_article.find_all('article', {'class': ['css-8atqhb']})
         for xx in headlines[:-1]:
-            sublink = xx.find('a')['href']
-            title = xx.find('h2').text  # Title of article
+            try:
+                sublink = xx.find('a')['href']
+            except AttributeError:
+                print('ERROR LINK')
+                continue
+
+            try:
+                title_tag = xx.find('h2')  # Title of article
+            except AttributeError:
+                print('ERROR TITLE')
+                continue
+
+            try:
+                if title_tag.find('span'):
+                    title = title_tag.find('span').text
+                else:
+                    title = title_tag.text
+            except AttributeError:
+                print('ERROR TEXT')
+                continue
 
             if not any([x in sublink for x in verboten]):
-                finall = link + sublink
+                if 'http' not in sublink:
+                    finall = link + sublink
+                else:
+                    finall = sublink
+
                 links.append(finall)  # Link of article
 
                 link_toks = finall.split('/')
@@ -214,7 +237,8 @@ def grabfront(link):
             # print(title + "\n")
 
     if 'apnews.com' in link:
-        headlines = parsed_article.find_all('div', {'class': 'CardHeadline'})
+        # print(parsed_article)
+        headlines = parsed_article.find_all('div', {'class': 'CardHeadline c0111 CardHeadlineInFeed'})
         for xx in headlines[:-1]:
             atag = xx.find('a', {'class': 'headline'})
             sublink = link + atag['href']
@@ -232,7 +256,11 @@ def grabfront(link):
     if 'latimes.com' in link:
         headlines = parsed_article.find_all('a', {'data-pb-field': "headlines.basic"})
         for xx in headlines[:-1]:
-            sublink = link + xx['href']
+            if 'http' not in xx['href']:
+                sublink = link + xx['href']
+            else:
+                sublink = xx['href']
+
             title = xx.text
             category = []
             for toks in xx['href'].split('/')[0:-1]:

@@ -12,11 +12,116 @@ import tkinter.scrolledtext as tkst
 import config
 from PIL import Image, ImageTk
 
-import playsound
-import gtts
-import string
-import threading
-import random
+'''
+class SampleApp(tk.Tk):
+
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        self.button = ttk.Button(text="start", command=self.start)
+        self.button.pack(side=tk.BOTTOM)
+        self.progress = ttk.Progressbar(self, orient="horizontal",
+                                        length=200, mode="determinate")
+        self.progress.pack(side=tk.TOP, expand=True, fill=tk.X)
+
+        self.bytes = 0
+        self.maxbytes = 0
+
+    def start(self):
+        self.progress["value"] = 0
+        self.maxbytes = 50000
+        self.progress["maximum"] = 50000
+        self.read_bytes()
+
+    def read_bytes(self):
+        # simulate reading 500 bytes; update progress bar
+        self.bytes += 500
+        self.progress["value"] = self.bytes
+        if self.bytes < self.maxbytes:
+            # read more bytes after 100 ms
+            self.after(100, self.read_bytes)
+'''
+
+'''
+def grabfront_wrapper(source, pos):
+    """ Generates a random string of numbers, lower- and uppercase chars. """
+    templinks, temptitles, tempcategories = grabheadline.grabfront(source)
+    print(templinks)
+    print('[RESULT] FINISHED GRABBING from ' + source)
+    return pos, templinks, temptitles, tempcategories
+
+
+def build_dictionary(link, pos):
+    currkeys = lxrTest.generateKeywords(link)
+    temp_d = dict()
+    for key in currkeys:
+        if key in temp_d.keys():
+            temp_d[key] = temp_d[key] + 1
+        else:
+            temp_d[key] = 1
+    return pos, currkeys, temp_d
+
+
+def graball_better():
+    # https://sebastianraschka.com/Articles/2014_multiprocessing.html
+    # Much better version, using python's multiprocessing module. Only takes around 45-50s
+    prev = time.time()
+    list_news = ['https://nytimes.com', 'https://reuters.com', 'https://bbc.com',
+                 'https://www.theguardian.com/international', 'https://apnews.com',
+                 'https://latimes.com', 'http://huffpost.com', 'https://www.npr.org/']
+    links = []
+    titles = []
+    bags_key = [[]]
+    keywords = dict()
+    prevt = time.time()
+    if __name__ == '__main__':
+        print('[INFO] GRABBING HEADLINES FROM POPULAR NEWSPAPERS...')
+        pool_prelim = ThreadPool(processes=4)
+        results_prelim = [pool_prelim.apply_async(grabfront_wrapper, args=(source, val), callback=append_result) for val, source in
+                          enumerate(list_news)]
+        results_prelim = [p.get() for p in results_prelim]
+
+        # Exit the completed processes
+        results_prelim.sort(key=lambda tup: tup[0])
+        print(results_prelim)
+
+        for elem in results_prelim:
+            links.extend(elem[1])
+            titles.extend(elem[2])
+        print(links)
+        print(titles)
+        print(time.time() - prev)
+        print(len(links))
+
+        output = mp.Queue()
+        processes_deux = []
+        for val, link in enumerate(links):
+            processes_deux.append(mp.Process(target=build_dictionary, args=(link, val, output)))
+
+        # prev = time.time()
+        pool_final = ThreadPool(processes=8)
+        results_final = [pool_final.apply_async(build_dictionary, args=(link, val)) for val, link in
+                         enumerate(links)]
+        results_final = [p.get() for p in results_final]
+        results_final.sort(key=lambda tup: tup[0])
+        print(results_final)
+        print(time.time() - prev)
+
+        for elem in results_final:
+            bags_key.append(elem[1])
+            dict_t = elem[2]
+            for key in dict_t.keys():
+                if key in keywords.keys():
+                    keywords[key] = keywords[key] + dict_t[key]
+                else:
+                    keywords[key] = dict_t[key]
+        sred_dict = sorted(keywords.items(), key=lambda value: value[1], reverse=True)
+
+        bags_key = bags_key[1:]
+        print(bags_key)
+        print(sred_dict)
+        print(time.time() - prev)
+        return sred_dict, bags_key, links, titles
+'''
 
 
 class keywordFrame:
@@ -281,8 +386,10 @@ class keywordFrame:
     def on_keyword_selection(self, event):
         selection = self.keyword_list_display.curselection()[0]
         string_sel = self.keyword_list_display.get(selection)
+        print(string_sel)
         key_sel = string_sel[string_sel.index('.') + 2:string_sel.index('-') - 1]
         self.currSearch = key_sel
+        print(key_sel)
 
         self.keyword_list_display.delete(0, tk.END)
         for val, index in enumerate(self.keyword_occurrence[key_sel]):
@@ -329,16 +436,15 @@ class summaryFrame_Key:
     # self, master, index, links, titles, sred_dict, keyword_occurrence, currSearch
     def __init__(self, *args):
         self.currMaster = args[0]
+        print(self.currMaster)
 
         self.prog1 = Frame(self.currMaster, bg=config.bg_color)  # Frame for Entry, Textbox and their labels
-        self.prog2 = Frame(self.currMaster, bg=config.bg_color)  # Frame for RESET and Sound Button
+        self.prog2 = Frame(self.currMaster, bg=config.bg_color)  # Frame for RESET Button
         self.prog3 = Frame(self.currMaster, bg=config.bg_color)  # Frame for length slider
         self.url = ''
         self.uptitle = ''
-        self.prt = ''
 
         self.bg_image = ImageTk.PhotoImage(Image.open('texture.jpg'))
-        self.speaker_icon = ImageTk.PhotoImage(Image.open('speaker_icon.png'))
 
         self.bg1 = Label(self.prog1, image=self.bg_image)
         self.bg1.image = self.bg_image
@@ -379,11 +485,6 @@ class summaryFrame_Key:
                                   font=config.button_font, fg=config.text_color)
         self.back_button.bind('<Button-1>', self.backToList)
         self.back_button.pack(side=tk.LEFT)
-
-        self.play_sound_button = Button(self.prog2, bg=config.button_color, font=config.button_font, height=32,
-                                        image=self.speaker_icon)
-        self.play_sound_button.bind('<Button-1>', self.on_sound_button_click)
-        self.play_sound_button.pack(side=tk.RIGHT)
 
         self.prog2.configure(bg=config.bg_color)
         self.prog3.configure(bg=config.bg_color)
@@ -456,7 +557,7 @@ class summaryFrame_Key:
 
             final_list = np.sort(self.scores[:DEFAULT_SUMMARY + 1])
             # summary = [self.sentences[i] for i in final_list]  # Getting the summary based on summary length
-            self.prt = ''
+            prt = ''
             tmp = ''
             bl = -1
             br = -1
@@ -471,12 +572,13 @@ class summaryFrame_Key:
                                 # print(self.sentences[s])
                                 tmp += self.sentences[s]
                             else:
-                                self.prt += tmp + "\n\n"
+                                prt += tmp + "\n\n"
                                 tmp = "" + self.sentences[s]
                             bl = self.bound[val2 - 1]
                             br = self.bound[val2]
                             break
 
+                # prt += str(val + 1) + ".  " + s + "\n\n"
             self.slider.set(DEFAULT_SUMMARY)
 
             self.title = re.sub(r'[\n\t]', r'', self.title)
@@ -491,7 +593,7 @@ class summaryFrame_Key:
             self.smry_text.tag_add("key", "3.0", "3.end")
             self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground=config.title_key_color)
 
-            self.smry_text.insert(tk.END, self.prt)
+            self.smry_text.insert(tk.END, prt)
             self.smry_text.tag_add("content", "4.0", tk.END)
             self.smry_text.tag_configure("content", font=config.contentfont_sum, lmargin2=20, lmargin1=20, rmargin=20)
 
@@ -503,26 +605,12 @@ class summaryFrame_Key:
         self.smry_text.configure(state=tk.DISABLED)
         self.back_button.configure(state=tk.NORMAL)
 
-    def on_sound_button_click(self, event):
-        thread1 = threading.Thread(target=self.playSSS, args=[])
-        thread1.setDaemon(True)
-        thread1.start()
-
-    def playSSS(self):
-        if self.prt == '':
-            return
-        tts = gtts.gTTS(
-            text=self.prt,
-            lang='en')
-        allchar = string.ascii_letters + string.digits
-        filename = "".join(random.choice(allchar) for x in range(12)) + ".mp3"
-        tts.save(filename)
-        playsound.playsound(filename)
-
     def backToList(self, event):
         self.prog1.pack_forget()
         self.prog2.pack_forget()
         self.prog3.pack_forget()
+        print(self.currMaster)
+        print(type(self.currMaster))
         fpl = keywordFrame(self.currMaster, self.currlinks, self.currtitles, self.sorted_keyword_dict,
                            self.keyword_occurrence, self.currSearch)
 
@@ -539,7 +627,7 @@ class summaryFrame_Key:
 
         final_list = np.sort(self.scores[:currval + 1])
         # summary = [self.sentences[i] for i in final_list]  # Getting the summary based on summary length
-        self.prt = ''
+        prt = ''
         tmp = ''
         bl = -1
         br = -1
@@ -559,7 +647,7 @@ class summaryFrame_Key:
                             # print(self.sentences[s])
                             tmp += self.sentences[s]
                         else:
-                            self.prt += tmp + "\n\n"
+                            prt += tmp + "\n\n"
                             tmp = "" + self.sentences[s]
                         bl = self.bound[val2 - 1]
                         br = self.bound[val2]
@@ -574,6 +662,19 @@ class summaryFrame_Key:
         self.smry_text.tag_add("key", "3.0", "3.end")
         self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground=config.title_key_color)
 
-        self.smry_text.insert(tk.END, self.prt)
+        self.smry_text.insert(tk.END, prt)
         self.smry_text.tag_add("content", "4.0", tk.END)
         self.smry_text.tag_configure("content", font=config.contentfont_sum, lmargin2=20, lmargin1=20, rmargin=20)
+
+
+'''
+root = Tk()
+
+wrap = Frame(root, bg='khaki3')
+kf = keywordFrame(wrap)
+wrap.pack(expand=True, fill=tk.BOTH)
+root.geometry("1400x800")
+root.resizable(0,0)
+
+root.mainloop()
+'''

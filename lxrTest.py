@@ -61,7 +61,11 @@ def parseText(link):
     # Find all sections within the html that contains the main article body
     if 'nytimes.com' in link:
         article_content = parsed_article.find('section', {'name': "articleBody"})
-        paragraphs = article_content.find_all('p', {'class': ["css-1ygdjhk evys1bk0", "css-1e7dx92 evys1bk0"]})
+        try:
+            paragraphs = article_content.find_all('p', {'class': ["css-1ygdjhk evys1bk0", "css-1e7dx92 evys1bk0"]})
+        except AttributeError:
+            status = -69
+            return status, lang, title, paragraphs
         title = parsed_article.find('head').find('title', {'data-rh': "true"})
 
     if 'bbc.com' in link:
@@ -82,28 +86,48 @@ def parseText(link):
 
     if 'washingtonpost.com' in link:
         article_content = parsed_article.find('article', {'itemprop': 'articleBody'})
-        paragraphs = article_content.find_all('p', {'class': False})
+        try:
+            paragraphs = article_content.find_all('p', {'class': False})
+        except AttributeError:
+            status = -69
+            print('error')
         title = parsed_article.find('title')
 
     if 'time.com' in link:
         article_content = parsed_article.find('div', {'id': 'article-body'})
-        paragraphs = article_content.find_all('p', {'class': False})
+        try:
+            paragraphs = article_content.find_all('p', {'class': False})
+        except AttributeError:
+            status = -69
+            print('error')
 
     if 'theguardian.com' in link:
         article_content = parsed_article.find('div', {'class': 'content__article-body from-content-api js-article__body'})
-        paragraphs = article_content.find_all('p', {'class': False})
+        try:
+            paragraphs = article_content.find_all('p', {'class': False})
+        except AttributeError:
+            status = -69
+            print('error')
 
     if 'wsj.com' in link:
         article_content = parsed_article.find('div', {'class': 'article-content'})
         paragraphs = article_content.find_all('p', {'class': False})
 
     if 'huffpost.com' in link:
-        paragraphs = parsed_article.find_all('div', {'class': 'content-list-component yr-content-list-text text'})
+        try:
+            paragraphs = parsed_article.find_all('div', {'class': 'content-list-component yr-content-list-text text'})
+        except AttributeError:
+            status = -69
+            print('error')
         # print(paragraphs)
 
     if 'arstechnica' in link:
         article_content = parsed_article.find('section', {'class': 'article-guts'})
-        paragraphs = article_content.find_all('p', {'class': False})
+        try:
+            paragraphs = article_content.find_all('p', {'class': False})
+        except AttributeError:
+            status = -69
+            print('error')
 
     if 'reuters.com' in link:
         article_content = parsed_article.find('div', {'class': 'StandardArticleBody_body'})
@@ -114,11 +138,19 @@ def parseText(link):
             print('error')
 
     if 'politico' in link:
-        article_content = parsed_article.find('div', {'class': 'content-group story-core'})
+        try:
+            article_content = parsed_article.find('div', {'class': 'content-group story-core'})
+        except AttributeError:
+            status = -69
+            print('error')
         paragraphs = article_content.find_all('p', {'class': False})
 
     if 'vnexpress.net' in link:
-        paragraphs = parsed_article.find_all('p', {'class': 'Normal'})
+        try:
+            paragraphs = parsed_article.find_all('p', {'class': 'Normal'})
+        except AttributeError:
+            status = -69
+            print('error')
         title = parsed_article.find('head').find('title')
 
     if 'tuoitre.com' in link:
@@ -127,8 +159,19 @@ def parseText(link):
         title = parsed_article.find('head').find('title')
 
     if 'latimes' in link:
-        paragraphs = parsed_article.find_all('div', {'class': "card collection-item", 'data-type': 'text'})
+        try:
+            paragraphs = parsed_article.find_all('div', {'class': "card collection-item", 'data-type': 'text'})
+        except AttributeError:
+            status = -69
+            print('error')
         title = parsed_article.find('head').find('title')
+
+    if 'npr' in link:
+        paragraphs = parsed_article.find('div', {'id': 'storytext'}).find_all('p', {'class': False})
+        for para in paragraphs:
+            print(para)
+            if para.find('b'):
+                paragraphs.remove(para)
 
     return status, lang, title, paragraphs
 

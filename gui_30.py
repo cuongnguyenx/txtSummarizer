@@ -1,12 +1,10 @@
-import tkinter as tk
-import numpy as np
 from sf import SummaryFrame
 from frontpage import FrontPageGrid
 from tkinter import *
 from tkinter import ttk
 from keyword_interface import keywordFrame
 import os
-from tkinter.font import Font
+from PIL import Image, ImageTk
 
 '''
 for filename in os.listdir("build"):
@@ -22,10 +20,19 @@ root = Tk()
 tabs = ttk.Notebook(root, height=800, width=1347)
 bg_color = 'gray67'
 
-
 progover = Frame(root, bg=bg_color)
 frontover = Frame(root, bg=bg_color)
 keyover = Frame(root, bg=bg_color)
+
+bg_image = ImageTk.PhotoImage(Image.open('texture.jpg'))
+
+bg_label_1 = Label(keyover, image=bg_image)
+bg_label_1.image = bg_image
+bg_label_1.place(x=0, y=0, relwidth=1, relheight=1)
+
+bg_label_2 = Label(progover, image=bg_image)
+bg_label_2.image = bg_image
+bg_label_2.place(x=0, y=0, relwidth=1, relheight=1)
 
 sm = SummaryFrame(progover)
 fm = FrontPageGrid(frontover, 1)
@@ -37,9 +44,9 @@ tabs.add(progover, text="Summary From Link")
 
 tabs.pack(side="top", fill="both")
 
-# root.geometry("1380x840")
+root.geometry("1347x820")
 root.title('QNews')
-# root.resizable(0, 0)
+root.resizable(0, 0)
 root.mainloop()
 
 # https://docs.python.org/3/library/tkinter.ttk.html#combobox
