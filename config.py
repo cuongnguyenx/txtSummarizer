@@ -8,6 +8,7 @@ active_big_button_color = 'gray90'
 active_small_button_color = 'gray15'
 
 entry_color = '#eff1e7'
+inverted_entry_color = '#0c0c0c'
 button_text_color = 'ghost white'
 button_color_gen = 'medium blue'
 
@@ -28,3 +29,5 @@ listbox_font = "\"Yu Gothic UI\" 18"
 
 title_text_color = "black"
 title_key_color = "gray32"
+title_text_inverted_color = "gray95"
+title_key_inverted_color = "gray90"

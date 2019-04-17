@@ -493,6 +493,7 @@ class SummaryFrame_Front:
         self.currcategories = currcategories
         self.currprt = ''
         self.currpage = currpage
+        self.currMode = 'light'
 
         self.speaker_icon = ImageTk.PhotoImage(Image.open('speaker_icon.png'))
 
@@ -508,15 +509,20 @@ class SummaryFrame_Front:
                                            relief=tk.FLAT, bg=config.entry_color, borderwidth=10)
         self.smry_text.grid(row=0, column=0, sticky='news', pady=(0, 5))
 
-        self.back_button = HoverButton(self.prog2, text="\u2190", height=5, pady=5, bg=config.button_color,
+        self.back_button = HoverButton(self.prog2, text="\u2190", height=5, padx=5, bg=config.button_color,
                                        justify=tk.LEFT, font=('Yu Mincho', 22))
         self.back_button.bind('<Button-1>', self.backToList)
         self.back_button.pack(side=tk.LEFT)
 
         self.play_sound_button = HoverButton(self.prog2, image=self.speaker_icon, bg=config.button_color,
-                                             font=config.button_font)
+                                             font=config.button_font, height=50, width=40)
         self.play_sound_button.bind('<Button-1>', self.on_sound_button_click)
         self.play_sound_button.pack(side=tk.RIGHT)
+
+        self.change_mode_button = HoverButton(self.prog2, text="\u263c", bg=config.button_color,
+                                              justify=tk.LEFT, font=('Yu Mincho', 20, 'bold'))
+        self.change_mode_button.bind('<Button-1>', self.changeMode)
+        self.change_mode_button.pack(padx=40, side=tk.RIGHT)
 
         self.prog2.configure(bg=config.bg_color)
         self.prog3.configure(bg=config.bg_color)
@@ -640,8 +646,12 @@ class SummaryFrame_Front:
         self.back_button.configure(state=tk.NORMAL)
 
     def on_sound_button_click(self, event):
-        self.thread1.start()
+        if self.play_sound_button['state'] == tk.DISABLED:
+            return
+        self.play_sound_button['state'] = tk.DISABLED
         self.thread1.setDaemon(True)
+        self.thread1.start()
+
 
     def playSSS(self):
         tts = gTTS(
@@ -702,11 +712,13 @@ class SummaryFrame_Front:
         # Inserting summary into the Textfield
         self.smry_text.insert(tk.END, self.title + "\n\n")
         self.smry_text.tag_add("title", "1.0", "1.end")
-        self.smry_text.tag_configure("title", font=config.titlefont_sum, foreground=config.title_text_color)
+        self.smry_text.tag_configure("title", font=config.titlefont_sum, foreground=config.title_text_color
+        if self.currMode == 'light' else config.title_text_inverted_color)
 
         self.smry_text.insert(tk.END, key_string + "\n")
         self.smry_text.tag_add("key", "3.0", "3.end")
-        self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground=config.title_key_color)
+        self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground=config.title_key_color
+        if self.currMode == 'light' else config.title_key_inverted_color)
 
         self.smry_text.insert(tk.END, self.prt)
         self.smry_text.tag_add("content", "4.0", tk.END)
@@ -714,6 +726,26 @@ class SummaryFrame_Front:
                                      spacing2=4)
 
         self.smry_text.configure(state=tk.DISABLED)
+
+    def changeMode(self, event):
+        if self.currMode == 'light':
+            self.currMode = 'dark'
+            self.change_mode_button['text'] = '\u2600'
+            self.smry_text['background'] = config.inverted_entry_color
+            self.smry_text.tag_configure("title", foreground=config.title_text_inverted_color)
+            self.smry_text.tag_configure("key", foreground=config.title_key_inverted_color)
+            self.smry_text.tag_configure("content", font=config.contentfont_sum,
+                                         foreground=config.title_text_inverted_color)
+
+        elif self.currMode == 'dark':
+            self.currMode = 'light'
+            self.change_mode_button['text'] = '\u263c'
+            self.smry_text['background'] = config.entry_color
+            self.smry_text.tag_configure("title", foreground=config.title_text_color)
+            self.smry_text.tag_configure("key", foreground=config.title_key_color)
+            self.smry_text.tag_configure("content", foreground='black')
+
+
 
 
 # https://stackoverflow.com/questions/4297949/image-on-a-button
