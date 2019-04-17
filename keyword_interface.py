@@ -11,6 +11,7 @@ import tkinter.messagebox
 import tkinter.scrolledtext as tkst
 import config
 from PIL import Image, ImageTk
+from hoverButton import HoverButton
 
 import playsound
 import gtts
@@ -70,13 +71,14 @@ class keywordFrame:
                                    bg=config.bg_color, justify=tk.CENTER, width=1400, height=675)
         self.loading_label.image = self.bg_image
 
-        self.generate_button = Button(self.frame_bottom, text='GENERATE', justify=tk.CENTER
-                                      , bg=config.button_color, font=config.button_font, fg=config.text_color,
-                                      command=self.populate_keyword_list_gui)
+        self.generate_button = HoverButton(self.frame_bottom, text='GENERATE', justify=tk.CENTER
+                                           , bg=config.button_color, font=config.button_font,
+                                           fg=config.button_text_color,
+                                           command=self.populate_keyword_list_gui)
 
-        self.return_to_keyword_button = Button(self.frame_bottom, text='\u2190', bg=config.button_color,
-                                               fg=config.text_color,
-                                               font=config.button_font, command=self.back_to_list)
+        self.return_to_keyword_button = HoverButton(self.frame_bottom, text='\u2190', bg=config.button_color,
+                                                    fg=config.button_text_color,
+                                                    font=config.button_font, command=self.back_to_list)
 
         # self.loading_bar.grid(row=0, sticky='news', pady=(300, 0), padx=(5, 5))
         # Alternate (0,100) (80,5) with bar or (300,100) (170,5) without bar
@@ -228,7 +230,7 @@ class keywordFrame:
 
     def back_to_list(self):
         self.return_to_keyword_button.pack_forget()
-        self.generate_button.pack(expand=True, fill=tk.BOTH)
+        self.generate_button.pack()
         self.master.update()
         self.keyword_list_display.bind('<<ListboxSelect>>', self.on_keyword_selection)
         self.populate_keyword_list_algol()
@@ -374,14 +376,14 @@ class summaryFrame_Key:
                                            relief=tk.FLAT, bg=config.entry_color, borderwidth=10)
         self.smry_text.grid(row=0, column=0, sticky='news', pady=(0, 5))
 
-        self.back_button = Button(self.prog2, text="\u2190", justify=tk.CENTER, height=5, pady=5,
-                                  bg=config.button_color,
-                                  font=config.button_font, fg=config.text_color)
+        self.back_button = HoverButton(self.prog2, text="\u2190", justify=tk.CENTER, height=5, pady=5,
+                                       bg=config.button_color,
+                                       font=config.button_font, fg=config.button_text_color)
         self.back_button.bind('<Button-1>', self.backToList)
         self.back_button.pack(side=tk.LEFT)
 
-        self.play_sound_button = Button(self.prog2, bg=config.button_color, font=config.button_font, height=32,
-                                        image=self.speaker_icon)
+        self.play_sound_button = HoverButton(self.prog2, bg=config.button_color, font=config.button_font, height=32,
+                                             image=self.speaker_icon)
         self.play_sound_button.bind('<Button-1>', self.on_sound_button_click)
         self.play_sound_button.pack(side=tk.RIGHT)
 

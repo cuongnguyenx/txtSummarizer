@@ -7,6 +7,7 @@ import tkinter.scrolledtext as tkst
 import tkinter.messagebox
 import config
 from PIL import Image, ImageTk
+from hoverButton import HoverButton
 
 import playsound
 import gtts
@@ -65,12 +66,13 @@ class SummaryFrame:
         self.smry_text.grid(row=0, column=0, sticky='news', pady=(0, 5))
 
         # Reset Button
-        self.reset_button = Button(self.prog2, text="RESET", justify=tk.CENTER, height=5, pady=5,
-                                   command=self.reset_everything, bg=config.button_color, fg=config.text_color,
-                                   font=config.button_font)
+        self.reset_button = HoverButton(self.prog2, text="RESET", justify=tk.CENTER, height=5, pady=5,
+                                        command=self.reset_everything, bg=config.button_color,
+                                        fg=config.button_text_color,
+                                        font=config.button_font)
 
-        self.play_sound_button = Button(self.prog2, bg=config.button_color, font=config.button_font, height=32,
-                                        image=self.speaker_icon)
+        self.play_sound_button = HoverButton(self.prog2, bg=config.button_color, font=config.button_font, height=32,
+                                             image=self.speaker_icon)
         self.play_sound_button.bind('<Button-1>', self.on_sound_button_click)
         self.play_sound_button.pack(side=tk.RIGHT)
         self.reset_button.pack()

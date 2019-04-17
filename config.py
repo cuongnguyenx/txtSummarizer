@@ -2,8 +2,13 @@ from PIL import Image, ImageTk
 
 bg_color = 'gray82'
 button_color = 'gray27'
+
+big_button_color = 'white'
+active_big_button_color = 'gray90'
+active_small_button_color = 'gray15'
+
 entry_color = '#eff1e7'
-text_color = 'ghost white'
+button_text_color = 'ghost white'
 button_color_gen = 'medium blue'
 
 slider_color = '#c0c0c0'

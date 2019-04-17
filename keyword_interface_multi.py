@@ -176,11 +176,11 @@ class keywordFrame:
         self.loading_label.image = self.bg_image
 
         self.generate_button = Button(self.frame_bottom, text='GENERATE', justify=tk.CENTER
-                                      , bg=config.button_color, font=config.button_font, fg=config.text_color,
+                                      , bg=config.button_color, font=config.button_font, fg=config.button_text_color,
                                       command=self.populate_keyword_list_gui)
 
         self.return_to_keyword_button = Button(self.frame_bottom, text='\u2190', bg=config.button_color,
-                                               fg=config.text_color,
+                                               fg=config.button_text_color,
                                                font=config.button_font, command=self.back_to_list)
 
         # self.loading_bar.grid(row=0, sticky='news', pady=(300, 0), padx=(5, 5))
@@ -482,7 +482,7 @@ class summaryFrame_Key:
 
         self.back_button = Button(self.prog2, text="\u2190", justify=tk.CENTER, height=5, pady=5,
                                   bg=config.button_color,
-                                  font=config.button_font, fg=config.text_color)
+                                  font=config.button_font, fg=config.button_text_color)
         self.back_button.bind('<Button-1>', self.backToList)
         self.back_button.pack(side=tk.LEFT)
 

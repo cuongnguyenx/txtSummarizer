@@ -238,10 +238,14 @@ def grabfront(link):
 
     if 'apnews.com' in link:
         # print(parsed_article)
-        headlines = parsed_article.find_all('div', {'class': 'CardHeadline c0111 CardHeadlineInFeed'})
+        headlines = parsed_article.find_all('div', {'class': re.compile(r'CardHeadline.*')})
         for xx in headlines[:-1]:
-            atag = xx.find('a', {'class': 'headline'})
-            sublink = link + atag['href']
+            print(xx)
+            atag = xx.find('a', {'class': ['headline']})
+            try:
+                sublink = link + atag['href']
+            except TypeError:
+                continue
             title = atag.find('h1').text
 
             if sublink not in links:
