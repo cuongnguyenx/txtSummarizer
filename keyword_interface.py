@@ -338,6 +338,7 @@ class summaryFrame_Key:
         self.url = ''
         self.uptitle = ''
         self.prt = ''
+        self.currMode = 'light'
 
         self.bg_image = ImageTk.PhotoImage(Image.open('texture.jpg'))
         self.speaker_icon = ImageTk.PhotoImage(Image.open('speaker_icon.png'))
@@ -382,10 +383,15 @@ class summaryFrame_Key:
         self.back_button.bind('<Button-1>', self.backToList)
         self.back_button.pack(side=tk.LEFT)
 
-        self.play_sound_button = HoverButton(self.prog2, bg=config.button_color, font=config.button_font, height=32,
-                                             image=self.speaker_icon)
+        self.play_sound_button = HoverButton(self.prog2, image=self.speaker_icon, bg=config.button_color,
+                                             font=config.button_font, height=50, width=40)
         self.play_sound_button.bind('<Button-1>', self.on_sound_button_click)
         self.play_sound_button.pack(side=tk.RIGHT)
+
+        self.change_mode_button = HoverButton(self.prog2, text="\u263c", bg=config.button_color,
+                                              justify=tk.LEFT, font=('Yu Mincho', 20, 'bold'))
+        self.change_mode_button.bind('<Button-1>', self.changeMode)
+        self.change_mode_button.pack(padx=40, side=tk.RIGHT)
 
         self.prog2.configure(bg=config.bg_color)
         self.prog3.configure(bg=config.bg_color)
@@ -570,12 +576,35 @@ class summaryFrame_Key:
         # Inserting summary into the Textfield
         self.smry_text.insert(tk.END, self.title + "\n\n")
         self.smry_text.tag_add("title", "1.0", "1.end")
-        self.smry_text.tag_configure("title", font=config.titlefont_sum, foreground=config.title_text_color)
+        self.smry_text.tag_configure("title", font=config.titlefont_sum, foreground=config.title_text_color
+        if self.currMode == 'light' else config.title_text_inverted_color)
 
         self.smry_text.insert(tk.END, key_string + "\n")
         self.smry_text.tag_add("key", "3.0", "3.end")
-        self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground=config.title_key_color)
+        self.smry_text.tag_configure("key", font=config.keyfont_sum, foreground=config.title_key_color
+        if self.currMode == 'light' else config.title_key_inverted_color)
 
         self.smry_text.insert(tk.END, self.prt)
         self.smry_text.tag_add("content", "4.0", tk.END)
-        self.smry_text.tag_configure("content", font=config.contentfont_sum, lmargin2=20, lmargin1=20, rmargin=20)
+        self.smry_text.tag_configure("content", font=config.contentfont_sum, lmargin2=20, lmargin1=20, rmargin=20,
+                                     spacing2=4)
+
+        self.smry_text.configure(state=tk.DISABLED)
+
+    def changeMode(self, event):
+        if self.currMode == 'light':
+            self.currMode = 'dark'
+            self.change_mode_button['text'] = '\u2600'
+            self.smry_text['background'] = config.inverted_entry_color
+            self.smry_text.tag_configure("title", foreground=config.title_text_inverted_color)
+            self.smry_text.tag_configure("key", foreground=config.title_key_inverted_color)
+            self.smry_text.tag_configure("content", font=config.contentfont_sum,
+                                         foreground=config.title_text_inverted_color)
+
+        elif self.currMode == 'dark':
+            self.currMode = 'light'
+            self.change_mode_button['text'] = '\u263c'
+            self.smry_text['background'] = config.entry_color
+            self.smry_text.tag_configure("title", foreground=config.title_text_color)
+            self.smry_text.tag_configure("key", foreground=config.title_key_color)
+            self.smry_text.tag_configure("content", foreground='black')
