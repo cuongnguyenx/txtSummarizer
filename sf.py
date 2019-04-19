@@ -257,7 +257,7 @@ class SummaryFrame:
 
         final_list = np.sort(self.scores[:currval + 1])
         # summary = [self.sentences[i] for i in final_list]  # Getting the summary based on summary length
-        prt = ''
+        self.prt = ''
         tmp = ''
         bl = -1
         br = -1
@@ -272,7 +272,7 @@ class SummaryFrame:
                             # print(self.sentences[s])
                             tmp += self.sentences[s]
                         else:
-                            prt += tmp + "\n\n"
+                            self.prt += tmp + "\n\n"
                             tmp = "" + self.sentences[s]
                         bl = self.bound[val2 - 1]
                         br = self.bound[val2]
