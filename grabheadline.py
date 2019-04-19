@@ -26,7 +26,7 @@ def grabfront(link):
 
     # Ignore link with any of these following words
     verboten = ['crossword', 'podcast', 'graphics', 'photography', 'interactive', 'av', 'food', 'newsletter', 'live',
-                'videos', 'programmes', 'bbcthree', 'britbox', 'topgear', 'slideshow', 'tips']
+                'videos', 'programmes', 'bbcthree', 'britbox', 'topgear', 'slideshow', 'tips', 'video']
     links = []  # Contains the links to pages on the FrontPageList, to be used for urllib
     titles = []  # Contains the titles to the corresponding links
     categories = []
@@ -301,6 +301,8 @@ def grabfront(link):
         headlines = parsed_article.find_all('a', {'class': 'card__link yr-card-headline'})
         for xx in headlines[:-1]:
             sublink = xx['href']
+            if any([x in sublink for x in verboten]):
+                continue
             title = xx.find('div').text
             if str.isupper(title):
                 continue
@@ -346,6 +348,8 @@ def grabfront(link):
         headlines = parsed_article.find_all('h1', {'class': 'headline '})
         for xx in headlines[:-1]:
             sublink = xx.find('a')['href']
+            if any([x in sublink for x in verboten]):
+                continue
             title = xx.find('a').text
 
             links.append(sublink)
@@ -390,6 +394,8 @@ def grabfront(link):
             if atag['data-analytics-link'] != 'article':
                 continue
             sublink = atag['href']
+            if any([x in sublink for x in verboten]):
+                continue
             title = atag.text
 
             links.append(sublink)

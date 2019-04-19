@@ -167,7 +167,12 @@ def parseText(link):
         title = parsed_article.find('head').find('title')
 
     if 'npr' in link:
-        paragraphs = parsed_article.find('div', {'id': 'storytext'}).find_all('p', {'class': False})
+        try:
+            paragraphs = parsed_article.find('div', {'id': 'storytext'}).find_all('p', {'class': False})
+        except AttributeError:
+            status = -69
+            print('error')
+
         for para in paragraphs:
             print(para)
             if para.find('b'):
