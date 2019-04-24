@@ -2,7 +2,6 @@ import math
 from collections import Counter, defaultdict
 import numpy as np
 from nltk.corpus import stopwords
-import os
 import nltk
 import string
 import time
@@ -23,7 +22,9 @@ def get_summary(sentences, lang, summary_size, threshold):
     lex_scores = rank_sentences(idf_score, lang, sentences, threshold)  # Calculate LexRank
     # print(time.time() - prev)
 
+
     sorted_scores = np.argsort(lex_scores)[::-1]  # Sorting the score array in terms of index
+
     final_list = np.sort(sorted_scores[:summary_size])
     summary = [sentences[i] for i in final_list]  # Getting the summary based on summary length
 
@@ -40,6 +41,16 @@ def get_summary_with_user(sentences, lang, threshold):
     # print(time.time() - prev)
 
     sorted_scores = np.argsort(lex_scores)[::-1]  # Sorting the score array in terms of index
+    print('[INFO] tf-idf score of individual sentences are as follows:')
+    print(lex_scores)
+    print('######')
+    print('[INFO] Ranked sentence indexes from highest to lowest:')
+    print(sorted_scores)
+    print('######')
+    print('[INFO] Source Sentences:')
+    for sent in sentences:
+        print(sent)
+
     return sorted_scores
 
 

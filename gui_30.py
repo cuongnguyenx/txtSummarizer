@@ -5,19 +5,26 @@ from tkinter import ttk
 from keyword_interface import keywordFrame
 import os
 from PIL import Image, ImageTk
-
-'''
-for filename in os.listdir("build"):
-      os.rename("build\\" + filename + "\lib\multiprocessing\Pool.pyc",
-                  "build\\" + filename + "\lib\multiprocessing\pool.pyc")
-'''
+import config
 
 for file in os.listdir('./'):
     if 'mp3' in file:
         os.remove(file)
 
 root = Tk()
-tabs = ttk.Notebook(root, height=800, width=1347)
+screen_w = root.winfo_screenwidth()
+screen_h = root.winfo_screenheight()
+
+config.ratio_w = screen_w/1920
+config.ratio_h = screen_h/1080
+
+config.curr_height = screen_h
+config.curr_width = screen_w
+
+config.generate_fonts(config.ratio_w, config.ratio_h)
+print(config.ratio_h)
+
+tabs = ttk.Notebook(root, height=int(screen_h*3/4), width=int(screen_w*3/4))
 bg_color = 'gray67'
 
 progover = Frame(root, bg=bg_color)
@@ -34,8 +41,12 @@ bg_label_2 = Label(progover, image=bg_image)
 bg_label_2.image = bg_image
 bg_label_2.place(x=0, y=0, relwidth=1, relheight=1)
 
+bg_label_3 = Label(frontover, image=bg_image)
+bg_label_3.image = bg_image
+bg_label_3.place(x=0, y=0, relwidth=1, relheight=1)
+
 sm = SummaryFrame(progover)
-fm = FrontPageGrid(frontover, 1)
+fm = FrontPageGrid(frontover, 1, screen_w, screen_h)
 km = keywordFrame(keyover)
 
 tabs.add(frontover, text="Read the Frontpages")
@@ -44,9 +55,7 @@ tabs.add(progover, text="Summary From Link")
 
 tabs.pack(side="top", fill="both")
 
-root.geometry("1347x820")
 root.title('QNews')
-root.resizable(0, 0)
 root.mainloop()
 
 # https://docs.python.org/3/library/tkinter.ttk.html#combobox

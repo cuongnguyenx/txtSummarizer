@@ -13,9 +13,16 @@ nltk.data.path.append('./nltk_data')
 
 
 def parseText(link):
+    # The raw html of the link's content
     article_content = ''
+
+    # Title of the Article
     title = ''
+
+    # The Language of the Article, right now I only support English
     lang = 'en'
+
+    # The parsed html of the link's content, containing all the <p> tags with article data
     paragraphs = ''
     keywords = []
     status = -1
@@ -174,7 +181,7 @@ def parseText(link):
             print('error')
 
         for para in paragraphs:
-            print(para)
+            # print(para)
             if para.find('b'):
                 paragraphs.remove(para)
 
@@ -261,6 +268,7 @@ def generateSummary(link, typ):
         sentences = re.sub(r'\."([A-Z0-9])', r'". \1', sentences)
         sentences = re.sub(r'(Mr\.|Ms\.|Dr\.|Mrs\.|[A-Z]\.) ', r'\1', sentences)
         sentences = re.sub(r' [0-9]+([0-9]+)\.([0-9]+)[0-9]+ ', r'\1\2', sentences)
+        sentences = re.sub(r'\[.+\]', r'', sentences)
         # formatted_article_text = re.sub('[^a-zA-Z]', ' ', sentences)
         keywords = rake.generate_from_article(sentences, 10)
 
@@ -295,18 +303,20 @@ def generateSummary(link, typ):
                 else:
                     paragraph_bound.append(val)
                 sents = sents.replace('<NNN>.', '')
-            new_sent_list[val] = sents
+                new_sent_list[val] = sents
+            if len(sents) > 3 and sents[-3:] in ['.\".', '?\".', '!\".']:
+                new_sent_list[val] = sents[:-2]
 
         # print(new_sent_list)
         counter = 0
         for i in range(len(new_sent_list)):
-            if len(new_sent_list[counter]) == 0:
+            if len(new_sent_list[counter]) < 10:
+                if counter + 1 < len(new_sent_list):
+                    new_sent_list[counter+1] += (new_sent_list[counter])
                 new_sent_list.remove(new_sent_list[counter])
                 counter = counter - 1
             counter = counter + 1
 
-            if len(sents) > 3 and sents[-3:] in ['.\".', '?\".', '!\".']:
-                new_sent_list[val] = sents[:-2]
 
         # print(time.time() - prev)
         # Generate the summary using LexRank, @summary_size = number of sentences

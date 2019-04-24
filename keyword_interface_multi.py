@@ -158,21 +158,22 @@ class keywordFrame:
         self.search_label = Label(self.frame_top, text="   Search:    ", bg=config.bg_color,
                                   font=("Yu Gothic Demibold", 14, 'bold'),
                                   relief=tk.SUNKEN)
-        self.search_box = Entry(self.frame_top, relief=tk.SUNKEN, bg=config.entry_color, width=200,
+        self.search_box = Entry(self.frame_top, relief=tk.SUNKEN, bg=config.entry_color, width=int(200*config.ratio_w),
                                 textvariable=self.searchVar, state=tk.DISABLED)
 
         self.searchVar.trace_add('write', self.searchKeyword)
 
         self.keyword_list_display = Listbox(self.frame_middle, height=21, highlightcolor='blue',
                                             font=config.listbox_font,
-                                            selectmode=tk.SINGLE, width=101)
+                                            selectmode=tk.SINGLE, width=int(101*config.ratio_w))
         self.keyword_list_display.bind('<<ListboxSelect>>', self.on_keyword_selection)
 
         # self.loading_bar = ttk.Progressbar(self.frame_middle, orient='horizontal', mode='indeterminate', length=1370)
         # self.loading_bar.start(50)
 
         self.loading_label = Label(self.frame_middle, image=self.bg_image,
-                                   bg=config.bg_color, justify=tk.CENTER, width=1400, height=675)
+                                   bg=config.bg_color, justify=tk.CENTER, width=int(1400*config.ratio_w),
+                                   height=int(config.ratio_h*675))
         self.loading_label.image = self.bg_image
 
         self.generate_button = Button(self.frame_bottom, text='GENERATE', justify=tk.CENTER

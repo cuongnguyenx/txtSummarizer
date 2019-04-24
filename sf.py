@@ -59,26 +59,26 @@ class SummaryFrame:
         # self.lbl_smry.grid(row=1, sticky=N + E + W + S, pady=(0, 5), padx=(5, 0))
 
         # Link Entry and Result Textbox
-        self.entry_link = Entry(self.prog1, width=175, relief=tk.SUNKEN, bg=config.entry_color)
-        self.smry_text = tkst.ScrolledText(self.prog4, state=tk.DISABLED, wrap=tk.WORD, width=133, height=42,
-                                           relief=tk.FLAT, bg=config.entry_color, borderwidth=10)
+        self.entry_link = Entry(self.prog1, width=int(180*config.ratio_w), relief=tk.SUNKEN, bg=config.entry_color)
+        self.smry_text = tkst.ScrolledText(self.prog4, state=tk.DISABLED, wrap=tk.WORD, width=int(145*config.ratio_w),
+                                           height=int(42*config.ratio_h), relief=tk.FLAT, bg=config.entry_color, borderwidth=10)
 
         self.entry_link.grid(row=0, column=1, sticky="news")
         self.smry_text.grid(row=0, column=0, sticky='news', pady=(0, 5))
 
         # Reset Button
-        self.reset_button = HoverButton(self.prog2, text="RESET", justify=tk.CENTER, height=5, pady=5,
+        self.reset_button = HoverButton(self.prog2, text="RESET", justify=tk.CENTER, pady=5,
                                         command=self.reset_everything, bg=config.button_color,
                                         fg=config.button_text_color,
                                         font=config.button_font)
 
         self.play_sound_button = HoverButton(self.prog2, image=self.speaker_icon, bg=config.button_color,
-                                             font=config.button_font, height=50, width=40)
+                                             font=config.button_font, height=int(60*config.ratio_h), width=int(40*config.ratio_w))
         self.play_sound_button.bind('<Button-1>', self.on_sound_button_click)
         self.play_sound_button.pack(side=tk.RIGHT)
 
         self.change_mode_button = HoverButton(self.prog2, text="\u263c", bg=config.button_color,
-                                              justify=tk.LEFT, font=('Yu Mincho', 20, 'bold'))
+                                              justify=tk.LEFT, font=config.sun_font)
         self.change_mode_button.bind('<Button-1>', self.changeMode)
         self.change_mode_button.pack(padx=40, side=tk.RIGHT)
 
@@ -93,7 +93,7 @@ class SummaryFrame:
         self.lbl_temp.grid(row=0, pady=(4, 4), padx=(4, 4))
 
         # Article length slider
-        self.slider = tk.Scale(self.prog3, from_=0, to=0, length=727, tickinterval=10, orient="vertical", showvalue=0,
+        self.slider = tk.Scale(self.prog3, from_=0, to=0, length=int(727*config.ratio_h), tickinterval=10, orient="vertical", showvalue=0,
                                relief=tk.SUNKEN, bg=config.slider_color)
         self.slider.bind('<ButtonRelease-1>', self.sliderUpdate)
 

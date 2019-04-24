@@ -1,4 +1,20 @@
-from PIL import Image, ImageTk
+import math
+
+center_label_font = ''
+titlefont_sum = ''
+keyfont_sum = ''
+contentfont_sum = ''
+slider_label_font = ''
+button_font = ''
+multilistbox_font = ''
+listbox_font = ''
+arrow_font = ''
+sun_font = ''
+
+curr_width = 1920
+curr_height = 1080
+ratio_w = 1
+ratio_h = 1
 
 bg_color = 'gray82'
 button_color = 'gray27'
@@ -16,18 +32,29 @@ slider_color = '#c0c0c0'
 slider_label_fg = 'gray25'
 slider_label_bg = '#eff1e7'
 
-center_label_font = "\"Yu Gothic Demibold\" 30 bold"
-
-titlefont_sum = "\"Times New Roman\" 28 bold"
-keyfont_sum = "\"Yu Gothic UI Light\" 14 italic"
-contentfont_sum = "\"Palatino Linotype\" 18"  # (family="Yu Gothic Medium", size=30)
-
-slider_label_font = "\"Yu Gothic Demibold\" 12 bold"
-button_font = "\"Yu Gothic UI\" 20 bold"
-multilistbox_font = "\"Yu Gothic UI\" 14"
-listbox_font = "\"Yu Gothic UI\" 18"
-
 title_text_color = "black"
 title_key_color = "gray32"
 title_text_inverted_color = "gray95"
 title_key_inverted_color = "gray90"
+
+
+def generate_fonts(ratio_w, ratio_h):
+    print(ratio_w)
+    global center_label_font, titlefont_sum, keyfont_sum, contentfont_sum, slider_label_font, button_font, \
+           multilistbox_font, listbox_font, arrow_font, sun_font
+    center_label_font = "\"Yu Gothic Demibold\" %d bold" % int(30*ratio_w)
+
+    titlefont_sum = "\"Times New Roman\" %d bold" % int(28*ratio_w)
+    keyfont_sum = "\"Yu Gothic UI Light\" %d italic" % int(14*ratio_w)
+    contentfont_sum = "\"Palatino Linotype\" %d" % int(18*ratio_w)  # (family="Yu Gothic Medium", size=30)
+
+    slider_label_font = "\"Yu Gothic Demibold\" %d bold" % int(12*ratio_w)
+    button_font = "\"Yu Gothic UI\" %d bold" % int(20*ratio_w)
+    multilistbox_font = "\"Yu Gothic UI\" %d" % int(14*ratio_w)
+    listbox_font = "\"Yu Gothic UI\" %d" % math.ceil(18*ratio_w)
+    arrow_font = "\"Yu Gothic UI\" %d bold" % int(24*ratio_w)
+    sun_font = "\"Yu Gothic UI\" %d bold" % int(20 * ratio_h)
+
+
+
+

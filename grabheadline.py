@@ -26,7 +26,7 @@ def grabfront(link):
 
     # Ignore link with any of these following words
     verboten = ['crossword', 'podcast', 'graphics', 'photography', 'interactive', 'av', 'food', 'newsletter', 'live',
-                'videos', 'programmes', 'bbcthree', 'britbox', 'topgear', 'slideshow', 'tips', 'video']
+                'videos', 'programmes', 'bbcthree', 'britbox', 'topgear', 'slideshow', 'tips', 'video', 'reddit']
     links = []  # Contains the links to pages on the FrontPageList, to be used for urllib
     titles = []  # Contains the titles to the corresponding links
     categories = []

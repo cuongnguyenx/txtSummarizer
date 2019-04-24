@@ -22,6 +22,10 @@ from hoverButton import HoverButton
 class FrontPageGrid:
     def __init__(self, *args):
         self.currMaster = args[0]  # the master should be the root
+        self.screen_w = args[2]
+        self.screen_h = args[3]
+        print(self.screen_w)
+        print(self.screen_h)
 
         self.main1 = Frame(self.currMaster, bg=config.bg_color)  # Main Frame, contains Image (2x3) Grid
         self.main2 = Frame(self.currMaster, bg=config.bg_color)
@@ -64,93 +68,128 @@ class FrontPageGrid:
         self.photo_guardian = ImageTk.PhotoImage(Image.open('guardian.png'))
         # self.photo_wsj = ImageTk.PhotoImage(Image.open('./imgs/wsj_2.jpg'))
         self.photo_ap = ImageTk.PhotoImage(Image.open('apnews.png'))
-
+        
         self.photo_latimes = ImageTk.PhotoImage(Image.open('latimes.png'))
         self.photo_npr = ImageTk.PhotoImage(Image.open('npr.png'))
         self.photo_huffpost = ImageTk.PhotoImage(Image.open('huffpost.png'))
         self.photo_newsweek = ImageTk.PhotoImage(Image.open('newsweek.png'))
         self.photo_politico = ImageTk.PhotoImage(Image.open('politico.png'))
         self.photo_verge = ImageTk.PhotoImage(Image.open('verge.png'))
+        
+        self.pad_norm = self.screen_w/384
+        self.pad_y_top = self.pad_norm * 3
+        self.pad_y_bottom = self.pad_norm * 2
+        self.pad_arrow = self.screen_h*0.37
+        
 
         # Declaring buttons and putting them in place
-        self.btn_ny = HoverButton(self.main1, bg=config.big_button_color, width=410, height=350, image=self.photo_ny,
+        self.btn_ny = HoverButton(self.main1, bg=config.big_button_color,
+                                  width=int(self.screen_w*71/320), height=int(self.screen_h*60/192)
+                                  ,image=self.photo_ny,
                                   name='ny')
         self.btn_ny.bind('<ButtonRelease-1>', self.ny_listen)  # Bind Left Click Event to a listener
-        self.btn_ny.grid(row=0, column=0, sticky='news', padx=(5, 5),
-                         pady=(15, 5))  # Add padding for aesthetic purposes
+        self.btn_ny.grid(row=0, column=0, sticky='news',
+                         padx=(self.pad_norm, self.pad_norm), pady=(self.pad_y_top, self.pad_norm))
+        # Add padding for aesthetic purposes
 
-        self.btn_wapo = HoverButton(self.main1, bg=config.big_button_color, width=410, height=350,
+        self.btn_wapo = HoverButton(self.main1, bg=config.big_button_color,
+                                    width=self.screen_w*71/320, height=self.screen_h*60/192,
                                     image=self.photo_wapo,
                                     name='wapo')
         self.btn_wapo.bind('<ButtonRelease-1>', self.wapo_listen)
-        self.btn_wapo.grid(row=0, column=1, sticky='news', padx=(5, 5), pady=(15, 5))
+        self.btn_wapo.grid(row=0, column=1, sticky='news',
+                           padx=(self.pad_norm, self.pad_norm), pady=(self.pad_y_top, self.pad_norm))
 
-        self.btn_bbc = HoverButton(self.main1, bg=config.big_button_color, width=410, height=350, image=self.photo_bbc,
+        self.btn_bbc = HoverButton(self.main1, bg=config.big_button_color,
+                                   width=self.screen_w*71/320, height=self.screen_h*60/192,
+                                   image=self.photo_bbc,
                                    name='bbc')
         self.btn_bbc.bind('<ButtonRelease-1>', self.bbc_listen)
-        self.btn_bbc.grid(row=0, column=2, sticky='news', padx=(5, 0), pady=(15, 5))
+        self.btn_bbc.grid(row=0, column=2, sticky='news',
+                          padx=(self.pad_norm, 0), pady=(self.pad_y_top, self.pad_norm))
 
-        self.btn_reuters = HoverButton(self.main1, bg=config.big_button_color, width=410, height=350,
+        self.btn_reuters = HoverButton(self.main1, bg=config.big_button_color,
+                                       width=self.screen_w*71/320, height=self.screen_h*60/192,
                                        image=self.photo_reuters,
                                        name='reuters')
         self.btn_reuters.bind('<ButtonRelease-1>', self.reuters_listen)
-        self.btn_reuters.grid(row=1, column=0, sticky='news', padx=(5, 5), pady=(5, 10))
+        self.btn_reuters.grid(row=1, column=0, sticky='news', padx=(self.pad_norm, self.pad_norm),
+                              pady=(self.pad_norm, self.pad_y_bottom))
 
-        self.btn_guardian = HoverButton(self.main1, bg=config.big_button_color, width=410, height=350,
+        self.btn_guardian = HoverButton(self.main1, bg=config.big_button_color,
+                                        width=self.screen_w*71/320, height=self.screen_h*60/192,
                                         image=self.photo_guardian,
                                         name='guardian')
         self.btn_guardian.bind('<ButtonRelease-1>', self.guardian_listen)
-        self.btn_guardian.grid(row=1, column=1, sticky='news', padx=(5, 5), pady=(5, 10))
+        self.btn_guardian.grid(row=1, column=1, sticky='news', padx=(self.pad_norm, self.pad_norm),
+                               pady=(self.pad_norm, self.pad_y_bottom))
 
-        self.btn_ap = HoverButton(self.main1, bg=config.big_button_color, width=410, height=350, image=self.photo_ap,
+        self.btn_ap = HoverButton(self.main1, bg=config.big_button_color,
+                                  width=self.screen_w*71/320, height=self.screen_h*60/192,
+                                  image=self.photo_ap,
                                   name='ap')
         self.btn_ap.bind('<ButtonRelease-1>', self.ap_listen)
-        self.btn_ap.grid(row=1, column=2, sticky='news', padx=(5, 0), pady=(5, 10))
+        self.btn_ap.grid(row=1, column=2, sticky='news',
+                         padx=(self.pad_norm, 0), pady=(self.pad_norm, self.pad_y_bottom))
 
-        self.btn_latimes = HoverButton(self.main2, bg=config.big_button_color, width=410, height=350,
+        self.btn_latimes = HoverButton(self.main2, bg=config.big_button_color,
+                                       width=self.screen_w*71/320, height=self.screen_h*60/192,
                                        image=self.photo_latimes,
                                        name='latimes')
         self.btn_latimes.bind('<ButtonRelease-1>', self.latimes_listen)
-        self.btn_latimes.grid(row=0, column=0, sticky='news', padx=(5, 5), pady=(15, 5))
+        self.btn_latimes.grid(row=0, column=0, sticky='news',
+                              padx=(self.pad_norm, self.pad_norm), pady=(self.pad_y_top, self.pad_norm))
 
-        self.btn_npr = HoverButton(self.main2, bg=config.big_button_color, width=410, height=350, image=self.photo_npr,
+        self.btn_npr = HoverButton(self.main2, bg=config.big_button_color,
+                                   width=self.screen_w*71/320, height=self.screen_h*60/192,
+                                   image=self.photo_npr,
                                    name='npr')
         self.btn_npr.bind('<ButtonRelease-1>', self.npr_listen)
-        self.btn_npr.grid(row=0, column=1, sticky='news', padx=(5, 5), pady=(15, 5))
+        self.btn_npr.grid(row=0, column=1, sticky='news',
+                          padx=(self.pad_norm, self.pad_norm), pady=(self.pad_y_top, self.pad_norm))
 
-        self.btn_huffington = HoverButton(self.main2, bg=config.big_button_color, width=410, height=350,
+        self.btn_huffington = HoverButton(self.main2, bg=config.big_button_color,
+                                          width=self.screen_w*71/320, height=self.screen_h*60/192,
                                           image=self.photo_huffpost,
                                           name='huffington')
         self.btn_huffington.bind('<ButtonRelease-1>', self.huffington_listen)
-        self.btn_huffington.grid(row=0, column=2, sticky='news', padx=(5, 0), pady=(15, 5))
+        self.btn_huffington.grid(row=0, column=2, sticky='news',
+                                 padx=(self.pad_norm, 0), pady=(self.pad_y_top, self.pad_norm))
 
-        self.btn_newsweek = HoverButton(self.main2, bg=config.big_button_color, width=410, height=350,
+        self.btn_newsweek = HoverButton(self.main2, bg=config.big_button_color,
+                                        width=self.screen_w*71/320, height=self.screen_h*60/192,
                                         image=self.photo_newsweek,
                                         name='newsweek')
         self.btn_newsweek.bind('<ButtonRelease-1>', self.newsweek_listen)
-        self.btn_newsweek.grid(row=1, column=0, sticky='news', padx=(5, 5), pady=(5, 10))
+        self.btn_newsweek.grid(row=1, column=0, sticky='news',
+                               padx=(self.pad_norm, self.pad_norm), pady=(self.pad_norm, self.pad_y_bottom))
 
-        self.btn_politico = HoverButton(self.main2, bg=config.big_button_color, width=410, height=350,
+        self.btn_politico = HoverButton(self.main2, bg=config.big_button_color,
+                                        width=self.screen_w*71/320, height=self.screen_h*60/192,
                                         image=self.photo_politico,
                                         name='politico')
         self.btn_politico.bind('<ButtonRelease-1>', self.politico_listen)
-        self.btn_politico.grid(row=1, column=1, sticky='news', padx=(5, 5), pady=(5, 10))
+        self.btn_politico.grid(row=1, column=1, sticky='news',
+                               padx=(self.pad_norm, self.pad_norm), pady=(self.pad_norm, self.pad_y_bottom))
 
-        self.btn_verge = HoverButton(self.main2, bg=config.big_button_color, width=410, height=350,
+        self.btn_verge = HoverButton(self.main2, bg=config.big_button_color,
+                                     width=self.screen_w*71/320, height=self.screen_h*60/192,
                                      image=self.photo_verge,
                                      name='verge')
         self.btn_verge.bind('<ButtonRelease-1>', self.verge_listen)
-        self.btn_verge.grid(row=1, column=2, sticky='news', padx=(5, 0), pady=(5, 10))
+        self.btn_verge.grid(row=1, column=2, sticky='news',
+                            padx=(self.pad_norm, 0), pady=(self.pad_norm, self.pad_y_bottom))
 
-        self.next_button = HoverButton(self.next, bg=config.button_color, text='\u27a1', font=('Yu Mincho', 22),
+        self.next_button = HoverButton(self.next, bg=config.button_color, text='\u27a1', font=config.arrow_font,
                                        name='nextpage')
         self.next_button.bind('<ButtonRelease-1>', self.nextPage)
-        self.next_button.grid(row=0, pady=(400, 0), padx=(0, 5))
+        self.next_button.grid(row=0, pady=(self.pad_arrow, 0), padx=(0, self.pad_norm))
 
-        self.prev_button = HoverButton(self.prev, bg=config.button_color, text='\u2b05', font=('Yu Mincho', 22),
+        self.prev_button = HoverButton(self.prev, bg=config.button_color, text='\u2b05', font=config.arrow_font,
                                        name='prevpage')
         self.prev_button.bind('<ButtonRelease-1>', self.prevPage)
-        self.prev_button.grid(row=0, pady=(400, 0), padx=(0, 5))
+        self.prev_button.grid(row=0, pady=(self.pad_arrow, 0), padx=(0, self.pad_norm))
+
 
         if self.currPage == 1:
             self.next.pack(side="right", fill=BOTH)
@@ -160,6 +199,7 @@ class FrontPageGrid:
             self.prev.pack(side="left", fill=BOTH)
             self.title.pack(side="top", fill=BOTH)
             self.main2.pack(side="bottom", fill=BOTH)
+
 
     def nextPage(self, event):
         self.main1.pack_forget()
@@ -339,9 +379,9 @@ class FrontPageGrid:
 
 class FrontPageList:
     def __init__(self, master, title, currlinks, currtitles, currcategories, currpage):
-        self.subcombine = Frame(master, bg=config.bg_color, width=1370, height=820)
-        self.subup = Frame(self.subcombine, bg=config.bg_color, width=1370, height=200)
-        self.subdown = Frame(self.subcombine, bg=config.bg_color, width=1370, height=620)
+        self.subcombine = Frame(master, bg=config.bg_color)
+        self.subup = Frame(self.subcombine, bg=config.bg_color)
+        self.subdown = Frame(self.subcombine, bg=config.bg_color)
 
         self.bg_image = ImageTk.PhotoImage(Image.open('texture.jpg'))
 
@@ -372,7 +412,7 @@ class FrontPageList:
             else:
                 self.categ_dict[categ] += 1
 
-        self.subtitle = Label(self.subup, text=self.uptitle, font=('Yu Gothic Semibold', 28, 'bold'), padx=5, pady=5,
+        self.subtitle = Label(self.subup, text=self.uptitle, font=config.center_label_font, padx=5, pady=5,
                               bg=config.bg_color)
         self.subtitle.pack()
 
@@ -386,7 +426,8 @@ class FrontPageList:
             for val in range(len(self.currlinks)):
                 self.currcategories.append('N/A')
 
-        self.size_drop = ttk.Combobox(self.subup, value=choices_categ, width=26, state='readonly', style=drop_style)
+        self.size_drop = ttk.Combobox(self.subup, value=choices_categ, width=int(26*config.ratio_w),
+                                      state='readonly', style=drop_style)
 
         self.size_drop.current(0)
         self.size_drop.pack()
@@ -394,7 +435,7 @@ class FrontPageList:
 
         self.currMaster.update()
 
-        self.listhead = ScrolledMultiListbox(self.subdown, relief='groove', bd=2, height=650)
+        self.listhead = ScrolledMultiListbox(self.subdown, relief='groove', bd=2, height=int(650*config.ratio_h)+5)
         self.listhead.listbox.config(columns=('Title', 'Category'), selectmode=tk.SINGLE, font=config.multilistbox_font)
 
         ###################################################################
@@ -415,8 +456,8 @@ class FrontPageList:
         self.listhead.listbox.bind('<1>', self.onGeneralClick, add=1)
         self.listhead.pack(expand=1, fill=tk.BOTH)
 
-        self.backmain = HoverButton(self.subdown, text='\u2190', pady=5,
-                                    bg=config.button_color, name="return", font=('Yu Mincho', 22),
+        self.backmain = HoverButton(self.subdown, text='\u2b05', pady=5,
+                                    bg=config.button_color, name="return", font=config.arrow_font,
                                     justify=tk.LEFT)
         self.backmain.bind('<ButtonRelease-1>', self.retMain)
         self.backmain.bind('<Enter')
@@ -444,7 +485,8 @@ class FrontPageList:
     def retMain(self, event):
         self.subcombine.pack_forget()
         self.listhead.listbox.delete(0, tk.END)
-        fpg = FrontPageGrid(self.currMaster, self.currpage)
+        fpg = FrontPageGrid(self.currMaster, self.currpage, self.currMaster.winfo_width()*4/3,
+                            self.currMaster.winfo_height()*4/3)
 
     def changeCategory(self, event):
         self.listhead.listbox.delete(0, tk.END)
@@ -505,28 +547,31 @@ class SummaryFrame_Front:
         # self.lbl_smry.grid(row=1, sticky=N + E + W + S, pady=(0, 5), padx=(5, 0))
 
         # Link Entry and Result Textbox
-        self.smry_text = tkst.ScrolledText(self.prog1, state=tk.DISABLED, wrap=tk.WORD, width=133, height=45,
-                                           relief=tk.FLAT, bg=config.entry_color, borderwidth=10)
+        self.smry_text = tkst.ScrolledText(self.prog1, state=tk.DISABLED, wrap=tk.WORD, width=int(145*config.ratio_w),
+                                           height=int(45*config.ratio_h), relief=tk.FLAT, bg=config.entry_color,
+                                           borderwidth=10)
+
         self.smry_text.grid(row=0, column=0, sticky='news', pady=(0, 5))
 
         self.back_button = HoverButton(self.prog2, text="\u2190", height=5, padx=5, bg=config.button_color,
-                                       justify=tk.LEFT, font=('Yu Mincho', 22))
+                                       justify=tk.LEFT, font=config.button_font)
         self.back_button.bind('<Button-1>', self.backToList)
         self.back_button.pack(side=tk.LEFT)
 
         self.play_sound_button = HoverButton(self.prog2, image=self.speaker_icon, bg=config.button_color,
-                                             font=config.button_font, height=50, width=40)
+                                             font=config.button_font, height=int(config.ratio_h*50),
+                                             width=int(config.ratio_w*40))
         self.play_sound_button.bind('<Button-1>', self.on_sound_button_click)
         self.play_sound_button.pack(side=tk.RIGHT)
 
         self.change_mode_button = HoverButton(self.prog2, text="\u263c", bg=config.button_color,
-                                              justify=tk.LEFT, font=('Yu Mincho', 20, 'bold'))
+                                              justify=tk.LEFT, font=config.sun_font)
         self.change_mode_button.bind('<Button-1>', self.changeMode)
         self.change_mode_button.pack(padx=40, side=tk.RIGHT)
 
         self.prog2.configure(bg=config.bg_color)
         self.prog3.configure(bg=config.bg_color)
-        self.prog1.configure(width=100)
+        self.prog1.configure(bg=config.bg_color)
         # Bind the Entry to the getSmry event through pressing Return
 
         self.lbl_temp = Label(self.prog3, text="ARTICLE SUMMARY LENGTH", bg=config.slider_label_bg,
@@ -535,8 +580,8 @@ class SummaryFrame_Front:
         self.lbl_temp.grid(row=0, pady=(4, 4), padx=(4, 4))
 
         # Article length slider
-        self.slider = tk.Scale(self.prog3, from_=0, to=0, length=727, tickinterval=10, orient="vertical", showvalue=0,
-                               relief=tk.SUNKEN, bg=config.slider_color)
+        self.slider = tk.Scale(self.prog3, from_=0, to=0, length=int(config.ratio_h*727), tickinterval=10,
+                               orient="vertical", showvalue=0, relief=tk.SUNKEN, bg=config.slider_color)
         self.slider.bind('<ButtonRelease-1>', self.sliderUpdate)
 
         self.slider.grid(row=1, pady=(5, 0))

@@ -12,6 +12,7 @@ import tkinter.scrolledtext as tkst
 import config
 from PIL import Image, ImageTk
 from hoverButton import HoverButton
+import math
 
 import playsound
 import gtts
@@ -54,21 +55,32 @@ class keywordFrame:
         self.search_label = Label(self.frame_top, text="   Search:    ", bg=config.bg_color,
                                   font=("Yu Gothic Demibold", 14, 'bold'),
                                   relief=tk.SUNKEN)
-        self.search_box = Entry(self.frame_top, relief=tk.SUNKEN, bg=config.entry_color, width=200,
+        self.search_box = Entry(self.frame_top, relief=tk.SUNKEN, bg=config.entry_color, width=int(200*config.ratio_w),
                                 textvariable=self.searchVar, state=tk.DISABLED)
 
         self.searchVar.trace_add('write', self.searchKeyword)
 
-        self.keyword_list_display = Listbox(self.frame_middle, height=21, highlightcolor='blue',
+        listbox_fontsize = int(config.listbox_font.split(' ')[-1])
+        print(listbox_fontsize)
+        listbox_height = config.curr_height/listbox_fontsize/3
+
+        if listbox_height % 1 == 0:
+            listbox_height += 1
+        else:
+            listbox_height = round(listbox_height)
+
+        self.keyword_list_display = Listbox(self.frame_middle, height=int(listbox_height),
+                                            highlightcolor='blue',
                                             font=config.listbox_font,
-                                            selectmode=tk.SINGLE, width=101)
+                                            selectmode=tk.SINGLE, width=math.ceil((config.curr_width-10)/listbox_fontsize)+2)
         self.keyword_list_display.bind('<<ListboxSelect>>', self.on_keyword_selection)
 
         # self.loading_bar = ttk.Progressbar(self.frame_middle, orient='horizontal', mode='indeterminate', length=1370)
         # self.loading_bar.start(50)
 
         self.loading_label = Label(self.frame_middle, image=self.bg_image,
-                                   bg=config.bg_color, justify=tk.CENTER, width=1400, height=675)
+                                   bg=config.bg_color, justify=tk.CENTER, width=int(1400*config.ratio_w),
+                                   height=int(675*config.ratio_h))
         self.loading_label.image = self.bg_image
 
         self.generate_button = HoverButton(self.frame_bottom, text='GENERATE', justify=tk.CENTER
@@ -97,7 +109,7 @@ class keywordFrame:
             self.gen_prev_state_with_key()
 
         self.frame_top.grid(row=0, sticky=N + E + W + S, pady=(0, 5), padx=(0, 0))
-        self.frame_middle.grid(row=1, sticky=N + E + W + S, pady=(0, 5), padx=(10, 5))
+        self.frame_middle.grid(row=1, sticky=N + E + W + S, pady=(0, 5), padx=(5, 0))
         self.frame_bottom.grid(row=2, sticky='news', pady=(0, 10), padx=(5, 30))
 
     def reset_data(self):
@@ -136,7 +148,7 @@ class keywordFrame:
         prev = time.time()
         list_news = ['https://nytimes.com', 'https://reuters.com', 'https://bbc.com',
                      'https://www.theguardian.com/international', 'https://apnews.com',
-                     'https://latimes.com', 'http://huffpost.com', 'https://www.npr.org/?t=1553745174305']
+                     'https://latimes.com', 'http://huffpost.com', 'https://www.npr.org/?t=1553745174305', 'https://newsweek.com']
 
         prevt = time.time()
         if __name__ == '__main__' or 'keyword_interface':
@@ -277,6 +289,8 @@ class keywordFrame:
             str_out = 'Huffington Post'
         elif 'npr' in link:
             str_out = 'NPR'
+        elif 'newsweek' in link:
+            str_out = 'Newsweek'
 
         return '(%s)' % str_out
 
@@ -293,6 +307,7 @@ class keywordFrame:
                 targetLink = self.links[index]
             except IndexError:
                 print('OOR!')
+                return
 
             news_target_title = self.genTarget(targetLink)
             self.keyword_list_display.insert(val + 1, self.titles[index] + " " + news_target_title)
@@ -308,6 +323,7 @@ class keywordFrame:
                 targetLink = self.links[index]
             except IndexError:
                 print('OOR!')
+                return
 
             news_target_title = self.genTarget(targetLink)
             self.keyword_list_display.insert(val + 1, self.titles[index] + " " + news_target_title)
@@ -373,8 +389,8 @@ class summaryFrame_Key:
         # self.lbl_smry.grid(row=1, sticky=N + E + W + S, pady=(0, 5), padx=(5, 0))
 
         # Link Entry and Result Textbox
-        self.smry_text = tkst.ScrolledText(self.prog1, state=tk.DISABLED, wrap=tk.WORD, width=133, height=45,
-                                           relief=tk.FLAT, bg=config.entry_color, borderwidth=10)
+        self.smry_text = tkst.ScrolledText(self.prog1, state=tk.DISABLED, wrap=tk.WORD, width=int(145*config.ratio_w),
+                                           height=int(45*config.ratio_h),relief=tk.FLAT, bg=config.entry_color, borderwidth=10)
         self.smry_text.grid(row=0, column=0, sticky='news', pady=(0, 5))
 
         self.back_button = HoverButton(self.prog2, text="\u2190", justify=tk.CENTER, height=5, pady=5,
@@ -384,18 +400,18 @@ class summaryFrame_Key:
         self.back_button.pack(side=tk.LEFT)
 
         self.play_sound_button = HoverButton(self.prog2, image=self.speaker_icon, bg=config.button_color,
-                                             font=config.button_font, height=50, width=40)
+                                             font=config.button_font, height=int(config.ratio_h*60), width=int(config.ratio_w*40))
         self.play_sound_button.bind('<Button-1>', self.on_sound_button_click)
         self.play_sound_button.pack(side=tk.RIGHT)
 
         self.change_mode_button = HoverButton(self.prog2, text="\u263c", bg=config.button_color,
-                                              justify=tk.LEFT, font=('Yu Mincho', 20, 'bold'))
+                                              justify=tk.LEFT, font=config.sun_font)
         self.change_mode_button.bind('<Button-1>', self.changeMode)
         self.change_mode_button.pack(padx=40, side=tk.RIGHT)
 
         self.prog2.configure(bg=config.bg_color)
         self.prog3.configure(bg=config.bg_color)
-        self.prog1.configure(width=100)
+        self.prog1.configure(bg=config.bg_color)
         # Bind the Entry to the getSmry event through pressing Return
 
         self.lbl_temp = Label(self.prog3, text="ARTICLE SUMMARY LENGTH", bg=config.slider_label_bg,
@@ -404,7 +420,7 @@ class summaryFrame_Key:
         self.lbl_temp.grid(row=0, pady=(4, 4), padx=(4, 4))
 
         # Article length slider
-        self.slider = tk.Scale(self.prog3, from_=0, to=0, length=727, tickinterval=10, orient="vertical", showvalue=0,
+        self.slider = tk.Scale(self.prog3, from_=0, to=0, length=int(727*config.ratio_h), tickinterval=10, orient="vertical", showvalue=0,
                                relief=tk.SUNKEN, bg=config.slider_color)
         self.slider.bind('<ButtonRelease-1>', self.sliderUpdate)
 
